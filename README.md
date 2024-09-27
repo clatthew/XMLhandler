@@ -6,7 +6,7 @@
 - all XML attributes, tags, etc ✅
 
 ### dict 🔴
-- convert XML structure to python dict 🔴
+- convert object tree structure to python dict 🔴
 - option to exclude tags to make dict more compact 🔴
 
 ### save and load objects ✅
@@ -30,6 +30,7 @@
 ### user-friendly ✴️
 - developed using TDD with full test coverage ✅
 - helpful docstrings 🔴
+- documentation 🔴
 
 ## XML file structure
 > notes from [w3schools](https://www.w3schools.com/xml/)
