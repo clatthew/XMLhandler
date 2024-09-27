@@ -102,17 +102,20 @@ class XMLElement:
         return output
     
     def print_line(self):
-        if self.is_root:
-            prefix = ""
-        else:
-            prefix = "   " * self.parent.depth + "∟"#"⊢"#"∟"#"⊢"#
-        if self.attribute and self.value:
-            return f"{prefix}{Format.underline + self.tag + Format.end}: ({self.attribute[0]}=\"{self.attribute[1]}\") {self.value}\n"
+        end = '\033[0m'
+        underline = '\033[4m'
+        output = ""
+        if not self.is_root:
+            output += "   " * self.parent.depth + "∟"
+        output += underline + self.tag + end
         if self.attribute:
-            return f"{prefix}{Format.underline + self.tag + Format.end}: ({self.attribute[0]}=\"{self.attribute[1]}\")\n"
+            output += f" ({self.attribute[0]}=\"{self.attribute[1]}\"): "
+        else:
+            output += ": "
         if self.value:
-            return f"{prefix}{Format.underline + self.tag + Format.end}: {self.value}\n"
-        return f"{prefix}{Format.underline + self.tag + Format.end}\n"
+            output += str(self.value)
+        output += "\n"
+        return output
 
     @property
     def descendants(self):
@@ -123,7 +126,3 @@ class XMLElement:
 
     def __iter__(self):
         yield from self.descendants
-
-class Format:
-    end = '\033[0m'
-    underline = '\033[4m'
