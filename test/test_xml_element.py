@@ -348,20 +348,17 @@ class Test_make_xml_tags:
 class Testto_xml:
     @mark.it("Forms the correct XML file for the bookstore data")
     def test_correct_xml_output(self):
-        # generate pkl file of the bookstore based on bookstore.xml
-        build_bookstore_file("pkl")
-        # load the pkl file
-        with open("book_store/bookstore.pkl", "rb") as f:
-            test_tree = load(f)
-        # send the object stored in the pkl file to xml using to_xml
+        # get bookstore object structure
+        test_tree = build_bookstore_file()
+        # dump it to XML
         test_tree.to_xml("book_store/test_xml.xml")
         # read the resulting xml file
         with open("book_store/test_xml.xml") as f:
             test_data = f.readlines()
-        # read the original xml
+        # read the sample bookstore xml
         with open("book_store/bookstore.xml") as f:
             bookstore_data = f.readlines()
-        # delete the created files
+        # delete the created test file
         os.remove("book_store/test_xml.xml")
         # compare the generated xml to the original
         assert bookstore_data == test_data
@@ -479,3 +476,9 @@ class Testvalue:
         with raises(ValueError) as err:
             root_element.make_child('hello')
         assert str(err.value) == "Cannot add children to an element with a value. Please set value to None."
+
+    @mark.it("Value can be updated")
+    def test_value_update(self, root_element):
+        root_element.make_child('book', value='the wasp factory')
+        root_element.last_child.value = 'The Wasp Factory'
+        assert root_element.last_child.value == 'The Wasp Factory'
