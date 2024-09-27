@@ -90,6 +90,25 @@ class XMLElement:
         else:
             f.write("".join(self.make_xml_tags())+"\n")
 
+    def __str__(self):
+        output = ""
+        for xmlelt in list(self):
+            output += xmlelt.print_line()
+        return output
+    
+    def print_line(self):
+        if self.is_root:
+            prefix = ""
+        else:
+            prefix = "    " * self.parent.depth + "⊢"#"∟"#"⊢"#
+        if self.attribute and self.value:
+            return f"{prefix}{Format.underline + self.tag + Format.end}: ({self.attribute[0]}=\"{self.attribute[1]}\") {self.value}\n"
+        if self.attribute:
+            return f"{prefix}{Format.underline + self.tag + Format.end}: ({self.attribute[0]}=\"{self.attribute[1]}\")\n"
+        if self.value:
+            return f"{prefix}{Format.underline + self.tag + Format.end}: {self.value}\n"
+        return f"{prefix}{Format.underline + self.tag + Format.end}\n"
+
     @property
     def descendants(self):
         descendant_list = [self]
@@ -100,22 +119,6 @@ class XMLElement:
     def __iter__(self):
         yield from self.descendants
 
-    # def descendants(self):
-    #     iterator = XMLIterator(self)
-    #     return iterator
-
-    # def __iter__(self):
-    #     return XMLIterator(self)
-
-
-# class XMLIterator:
-#     def __init__(self, iterable):
-#         self.iterable = iterable
-
-#     def __iter__(self):
-#         return self
-
-#     def __next__(self):
-#         yield self.iterable
-#         for child in self.iterable.children:
-#             yield iter(child)
+class Format:
+    end = '\033[0m'
+    underline = '\033[4m'

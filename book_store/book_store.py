@@ -17,12 +17,13 @@ def build_bookstore_file(filetype):
     root_element.last_child.make_child('author', value="Erik T. Ray")
     root_element.last_child.make_child('year', value=2003)
     root_element.last_child.make_child('price', value=39.95)
-
     # print(loaded_tree.tag, [child.value for child in loaded_tree.children[0].children])
     if filetype == 'xml':
         root_element.to_xml('book_store/bookstore_export.xml')
     if filetype == 'pkl':
         root_element.to_pickle('book_store/bookstore.pkl')
+    return root_element
 
 if __name__ == "__main__":
-    build_bookstore_file('pkl')
+    tree = build_bookstore_file('pkl')
+    print(tree)
