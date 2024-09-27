@@ -1,4 +1,4 @@
-# XMLhndlr
+# XMLhandler
 > by clatthew
 ## To do: initial features
 ### XML structure ✅
@@ -27,8 +27,8 @@
 - dump object structure into a well-formed XML file ✅
 - properly handle characters < > & ' "
 
-### user-friendly✴️
-- developed using TDD with full test coverage✅
+### user-friendly ✴️
+- developed using TDD with full test coverage ✅
 - helpful docstrings
 
 ## XML file structure
@@ -36,7 +36,7 @@
 - first line: `<?xml version="1.0" encoding="UTF-8"?>`
 - Root element: name
 - middle elemenets: (optional) sttribute (inside tag, eg. `<book category="cooking">`). must be in quotes
-- lead elements: (optional) category inside tag, text between open tag and close tag.
+- leaf elements: (optional) category inside tag, text between open tag and close tag.
 - elements start with `<open_tag>` and end with `</close_tag>`
 - all text is stored as plain text in the file. In python, a decision would have to be made about data types.
 ```xml
