@@ -25,5 +25,5 @@ def build_bookstore_file(filetype):
     return root_element
 
 if __name__ == "__main__":
-    tree = build_bookstore_file('pkl')
+    tree = build_bookstore_file()
     print(tree)
