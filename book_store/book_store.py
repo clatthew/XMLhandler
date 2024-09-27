@@ -1,6 +1,6 @@
 from src.xml_element import XMLElement
 # from pickle import load
-def build_bookstore_file(filetype):
+def build_bookstore_file(filetype=None):
     root_element = XMLElement("bookstore", is_root=True)
     root_element.make_child('book', ('category', 'cooking'))
     root_element.last_child.make_child('title', ('lang','en'), 'Everyday Italian')
