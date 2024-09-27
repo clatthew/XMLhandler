@@ -169,12 +169,12 @@ class Testsize:
             loaded_tree = load(f)
         assert loaded_tree.size == 16
 
-
-class Testdescendants:
+# This should be made into a true interator
+class Test__iter__:
     @mark.it("Root element's descendants are only itself")
     def test_root_descendants(self, root_element):
         assert len(root_element.descendants) == 1
-        for descendant in root_element.descendants:
+        for descendant in list(root_element):
             assert descendant is root_element
 
     @mark.it(
@@ -186,7 +186,7 @@ class Testdescendants:
         root_element.last_child.make_sibling()
         root_element.last_child.make_sibling()
         expected = [root_element] + root_element.children
-        result = root_element.descendants
+        result = list(root_element)
         assert result == expected
 
     @mark.it("Correctly returns descendants for deep tree")
@@ -206,7 +206,7 @@ class Testdescendants:
         test_child32 = XMLElement("price", value=9.99)
         root_element.last_child.add_child(test_child32)
         assert root_element.size == 8
-        descendants = root_element.descendants
+        descendants = list(root_element)
         for xmlelt in [
             test_child1,
             test_child2,

@@ -65,3 +65,27 @@ class XMLElement:
         for child in self.children:
             descendant_list += child.descendants
         return descendant_list
+
+    def __iter__(self):
+        yield from self.descendants
+
+    # def descendants(self):
+    #     iterator = XMLIterator(self)
+    #     return iterator
+
+    # def __iter__(self):
+    #     return XMLIterator(self)
+
+
+# class XMLIterator:
+#     def __init__(self, iterable):
+#         self.iterable = iterable
+
+#     def __iter__(self):
+#         return self
+    
+#     def __next__(self):
+#         yield self.iterable
+#         for child in self.iterable.children:
+#             yield iter(child)
+        
