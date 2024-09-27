@@ -5,9 +5,9 @@
 - tree structure ✅
 - all XML attributes, tags, etc ✅
 
-### dict
-- convert XML structure to python dict
-- option to exclude tags to make dict more compact
+### dict 🔴
+- convert XML structure to python dict 🔴
+- option to exclude tags to make dict more compact 🔴
 
 ### save and load objects ✅
 - save internal XML structure to pickle ✅
@@ -20,16 +20,16 @@
 - preview tree structure in the terminal ✅
 - remove items ✅
 
-### load from XML file
-- load data and structure from XML file into the object structure
+### load from XML file 🔴
+- load data and structure from XML file into the object structure 🔴
 
 ### dump to XML file ✴️
 - dump object structure into a well-formed XML file ✅
-- properly handle characters < > & ' "
+- properly handle characters < > & ' " 🔴
 
 ### user-friendly ✴️
 - developed using TDD with full test coverage ✅
-- helpful docstrings
+- helpful docstrings 🔴
 
 ## XML file structure
 > notes from [w3schools](https://www.w3schools.com/xml/)
