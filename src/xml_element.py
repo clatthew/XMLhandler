@@ -1,16 +1,26 @@
-from pickle import dump 
+from pickle import dump
+
+
 class XMLElement:
-    def __init__(self, tag : str, attribute=None, value=None, parent=None, root=False):
+    def __init__(
+        self, tag: str, attribute=None, value=None, parent=None, is_root=False
+    ):
         self.tag = tag
         self.attribute = attribute
         self.value = value
-        self.root = root
+        self.is_root = is_root
         self.children = []
         self.parent = parent
+        if self.is_root:
+            self.root = self
 
     def add_child(self, new_child):
+        if new_child is self:
+            raise ValueError("cannot add self as child")
         new_child.parent = self
-        new_child.root = False
+        new_child.is_root = False
+        for xmlelt in new_child.descendants:
+            xmlelt.root = self.root
         self.children.append(new_child)
 
     def make_child(self, tag: str, attribute=None, value=None):
@@ -26,10 +36,32 @@ class XMLElement:
     def to_pickle(self, filepath=None):
         if not filepath:
             filepath = self.tag
-        with open (f'{filepath}.pkl', 'wb') as f:
+        with open(f"{filepath}.pkl", "wb") as f:
             dump(self, f)
 
     @property
     def last_child(self):
         if self.children:
             return self.children[-1]
+
+    @property
+    def depth(self):
+        if self.parent:
+            return 1 + self.parent.depth
+        else:
+            return 0
+
+    @property
+    def no_children(self):
+        return len(self.children)
+
+    @property
+    def size(self):
+        return len(self.descendants)
+
+    @property
+    def descendants(self):
+        descendant_list = [self]
+        for child in self.children:
+            descendant_list += child.descendants
+        return descendant_list
