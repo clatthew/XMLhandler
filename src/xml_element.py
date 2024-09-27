@@ -100,7 +100,7 @@ class XMLElement:
         if self.is_root:
             prefix = ""
         else:
-            prefix = "    " * self.parent.depth + "⊢"#"∟"#"⊢"#
+            prefix = "   " * self.parent.depth + "∟"#"⊢"#"∟"#"⊢"#
         if self.attribute and self.value:
             return f"{prefix}{Format.underline + self.tag + Format.end}: ({self.attribute[0]}=\"{self.attribute[1]}\") {self.value}\n"
         if self.attribute:
