@@ -140,7 +140,6 @@ class XMLElement:
     def remove_from_path(self, path):
         to_remove = self.get_from_path(path)
         if to_remove.is_root:
-            raise IndexError('cannot remove root element')
+            raise IndexError("cannot remove root element")
         parent = self.get_from_path(path[:-1])
         parent.children.remove(to_remove)
-        
