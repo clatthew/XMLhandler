@@ -1,23 +1,31 @@
 # XMLhndlr
 > by clatthew
-## Features (planned)
-### XML structure
-- OOP tree structure
-- all XML attributes, tags, etc
+## To do: initial features
+### XML structure ✅
+- tree structure ✅
+- all XML attributes, tags, etc ✅
 
 ### dict
 - convert XML structure to python dict
 - option to exclude tags to make dict more compact
 
-### save and load objects
-- save internal XML structure to pickle
-- open from pickle
+### save and load objects ✅
+- save internal XML structure to pickle ✅
+- open from pickle ✅
+
+### edit file ✴️ 
+- add children ✅
+- add siblings ✅
+- edit attributes and values
+- preview tree structure in the terminal ✅
+- remove items ✅
 
 ### load from XML file
-- load data and structure from XML file into an object structure
+- load data and structure from XML file into the object structure
 
-### dump to XML file
-- dump object structure into a compliant XML file
+### dump to XML file ✴️
+- dump object structure into a well-formed XML file ✅
+- **still to do:** properly handle characters < > & ' "
 
 ## XML file structure
 > notes from [w3schools](https://www.w3schools.com/xml/)
