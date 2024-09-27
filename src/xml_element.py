@@ -34,11 +34,14 @@ class XMLElement:
         new_child = XMLElement(tag, attribute, value)
         self.add_child(new_child)
 
+    def add_sibling(self, new_sibling):
+        self.parent.add_child(new_sibling)
+
     def make_sibling(self, tag=None, attribute=None, value=None):
         if not tag:
             tag = self.tag
         new_sibling = XMLElement(tag, attribute, value)
-        self.parent.add_child(new_sibling)
+        self.add_sibling(new_sibling)
 
     def to_pickle(self, filepath=None):
         if not filepath:

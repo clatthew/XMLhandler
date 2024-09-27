@@ -115,21 +115,44 @@ class Testmake_child:
         assert root_element.children[0].value == "Matthew"
 
 
-class Testadd_sibling:
-    @mark.it("add_sibling adds an instance of XMLElement to parent's children")
-    def test_add_sibline(self, root_element):
+class Testmake_sibling:
+    @mark.it("make_sibling adds an instance of XMLElement to parent's children")
+    def test_make_sibling(self, root_element):
         root_element.make_child("book")
         root_element.children[0].make_sibling(value="Carrots")
         assert len(root_element.children) == 2
         assert root_element.children[1].value == "Carrots"
 
-    @mark.it("add_sibling sets new sibling's tag to own value by default")
-    def test_add_subling_tag(self, root_element):
+    @mark.it("make_sibling sets new sibling's tag to own value by default")
+    def test_make_sibling_tag(self, root_element):
         root_element.make_child("book")
         root_element.last_child.make_sibling()
         for child in root_element.children:
             assert child.tag == "book"
 
+class Testadd_sibling:
+    @mark.it("add_sibling adds the passed object to its parent's children")
+    def test_add_sibling_list(self, root_element):
+        test_child1 = XMLElement('book')
+        test_child2 = XMLElement('book')
+        root_element.add_child(test_child1)
+        test_child1.add_sibling(test_child2)
+        assert test_child2 in root_element.children
+    @mark.it("add_sibling changes the new sibling's root")
+    def test_add_sibling_root(self, root_element):
+        test_child1 = XMLElement('book')
+        test_child2 = XMLElement('book')
+        root_element.add_child(test_child1)
+        test_child1.add_sibling(test_child2)
+        assert test_child2.root is root_element
+
+    @mark.it("add_sibling changes the new sibling's parent")
+    def test_add_sibling_parent(self, root_element):
+        test_child1 = XMLElement('book')
+        test_child2 = XMLElement('book')
+        root_element.add_child(test_child1)
+        test_child1.add_sibling(test_child2)
+        assert test_child2.parent is root_element
 
 class Testlast_child:
     @mark.it("last_child returns only child")
