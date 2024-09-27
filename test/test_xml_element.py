@@ -45,7 +45,7 @@ class Testadd_child:
     def test_index_error_self_add(self, root_element):
         with raises(ValueError) as err:
             root_element.add_child(root_element)
-        assert str(err.value) == "cannot add self as child"
+        assert str(err.value) == "cannot add descendant as child"
 
     @mark.it("Added child's descendants' roots match its parent's")
     def test_correct_root_deep(self, root_element):
@@ -302,4 +302,4 @@ class Testto_xml:
         # compare the generated xml to the original
         assert bookstore_data == test_data
 
-
+# remove by 

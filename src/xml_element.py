@@ -13,15 +13,20 @@ class XMLElement:
         self.parent = parent
         if self.is_root:
             self.root = self
+            self.path = []
+
+    def add_parent(self, parent):
+        self.parent = parent
+        self.is_root = False
+        self.path = parent.path + [parent.no_children]
+        parent.children.append(self)
 
     def add_child(self, new_child):
-        if new_child is self:
-            raise ValueError("cannot add self as child")
-        new_child.parent = self
-        new_child.is_root = False
+        if new_child in self.descendants:
+            raise ValueError("cannot add descendant as child")
         for xmlelt in new_child.descendants:
             xmlelt.root = self.root
-        self.children.append(new_child)
+        new_child.add_parent(self)
 
     def make_child(self, tag: str, attribute=None, value=None):
         new_child = XMLElement(tag, attribute, value)
