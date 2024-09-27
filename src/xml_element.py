@@ -111,10 +111,10 @@ class XMLElement:
             output += "   " * self.parent.depth + "∟"
         output += underline + self.tag + end
         if self.attribute:
-            output += f' ({self.attribute[0]}="{self.attribute[1]}"): '
+            output += f' ({self.attribute[0]}="{self.attribute[1]}")'
         if self.value:
             output += ": " + str(self.value)
-        output += (60 - len(output)) * " " + str(self.path)
+        output += max((60 - len(output)), 5) * " " + str(self.path)
         output += "\n"
         return output
 
