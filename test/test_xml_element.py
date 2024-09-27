@@ -342,3 +342,94 @@ class Testto_xml:
         os.remove("book_store/test_xml.xml")
         # compare the generated xml to the original
         assert bookstore_data == test_data
+
+
+class Testget_from_path:
+    @mark.it("Retrieves root element when passed path []")
+    def test_root(self, root_element):
+        result = root_element.get_from_path([])
+        assert result is root_element
+
+    @mark.it("Retrieves root element's second child when passed path [1]")
+    def test_child(self, root_element):
+        test_child1 = XMLElement("book")
+        test_child2 = XMLElement("book")
+        root_element.add_child(test_child1)
+        root_element.add_child(test_child2)
+        result = root_element.get_from_path([1])
+        assert result is test_child2
+
+    @mark.it(
+        "Retrieves the third child added to first child added to root element when passed path [0, 2]."
+    )
+    def test_grandchild(self, root_element):
+        test_child1 = XMLElement("book", is_root=True)
+        test_child2 = XMLElement("title")
+        test_child3 = XMLElement("length")
+        test_child4 = XMLElement("price")
+        test_child1.add_child(test_child2)
+        test_child1.add_child(test_child3)
+        test_child1.add_child(test_child4)
+        root_element.add_child(test_child1)
+        result = root_element.get_from_path([0, 2])
+        assert result is test_child4
+
+    @mark.it("Retrieves that child's second child when passed path [0, 2, 1]")
+    def test_first_child_third_child_child_path(self, root_element):
+        test_child1 = XMLElement("book", is_root=True)
+        test_child2 = XMLElement("title")
+        test_child3 = XMLElement("length")
+        test_child4 = XMLElement("price")
+        root_element.add_child(test_child1)
+        root_element.last_child.add_child(test_child2)
+        root_element.last_child.add_child(test_child3)
+        root_element.last_child.add_child(test_child4)
+        test_child4.make_child("euro", value=20)
+        test_child4.make_child("pound", value=18)
+        result = root_element.get_from_path([0, 2, 1])
+        assert result is test_child4.last_child
+
+    @mark.it('Raises IndexError if requested path is not in the tree')
+    def test_index_error(self, root_element):
+        with raises (IndexError) as err:
+            root_element.get_from_path([0])
+        assert str(err.value) == "no element found at path [0]"
+        root_element.make_child('book')
+        with raises (IndexError) as err:
+            root_element.get_from_path([0, 0])
+        assert str(err.value) == "no element found at path [0, 0]"
+
+class Testremove_from_path:
+    @mark.it("Does not allow removal of the root element")
+    def test_remove_root(self, root_element):
+        with raises(IndexError) as err:
+            root_element.remove_from_path([])
+        assert str(err.value) == 'cannot remove root element'
+
+    @mark.it("Successfully removes 'leaf' element and updates size accordingly")
+    def test_remove_leaf(self, root_element):
+        test_child1 = XMLElement("book")
+        test_child2 = XMLElement("book")
+        root_element.add_child(test_child1)
+        root_element.add_child(test_child2)
+        root_element.remove_from_path([1])
+        assert root_element.size == 2
+        assert test_child2 not in list(root_element)
+
+    @mark.it("Successfully removes element with children and updates size accordingly")
+    def test_remove_element_with_kids(self, root_element):
+        test_child1 = XMLElement("book", is_root=True)
+        test_child2 = XMLElement("title")
+        test_child3 = XMLElement("length")
+        test_child4 = XMLElement("price")
+        root_element.add_child(test_child1)
+        root_element.last_child.add_child(test_child2)
+        root_element.last_child.add_child(test_child3)
+        root_element.last_child.add_child(test_child4)
+        test_child4.make_child("euro", value=20)
+        test_child5 = XMLElement('pound', value=18)
+        test_child4.add_child(test_child5)
+        root_element.remove_from_path([0, 2])
+        assert root_element.size == 4
+        assert test_child4 not in list(root_element)
+        assert test_child5 not in list(root_element)
