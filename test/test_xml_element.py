@@ -465,3 +465,17 @@ class Testremove_from_path:
         assert root_element.size == 4
         assert test_child4 not in list(root_element)
         assert test_child5 not in list(root_element)
+
+class Testvalue:
+    @mark.it("Value cannot be added to an element with children")
+    def test_value_children(self, root_element):
+        root_element.make_child('book')
+        with raises(ValueError) as err:
+            root_element.value = "hello"
+        assert str(err.value) == 'Cannot add value to an element with children'
+    @mark.it("Children cannot be added to an element with a value")
+    def test_children_value(self, root_element):
+        root_element.value = "hello"
+        with raises(ValueError) as err:
+            root_element.make_child('hello')
+        assert str(err.value) == "Cannot add children to an element with a value. Please set value to None."

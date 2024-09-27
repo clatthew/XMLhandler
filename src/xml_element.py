@@ -7,12 +7,23 @@ class XMLElement:
     ):
         self.tag = tag
         self.attribute = attribute
-        self.value = value
+        self.__value = value
         self.is_root = is_root
         self.children = []
         self.parent = parent
         if is_root:
             self.root = self
+
+    @property
+    def value(self):
+        return self.__value
+    
+    @value.setter
+    def value(self, new_val):
+        if self.children:
+            raise ValueError('Cannot add value to an element with children')
+        else:
+            self.__value = new_val
 
     @property
     def path(self):
@@ -24,6 +35,8 @@ class XMLElement:
     def add_child(self, new_child):
         if new_child in self.descendants:
             raise ValueError("cannot add descendant as child")
+        if self.value:
+            raise ValueError("Cannot add children to an element with a value. Please set value to None.")
         self.children.append(new_child)
         new_child.parent = self
         new_child.is_root = False
@@ -76,10 +89,10 @@ class XMLElement:
             open_tag = f"<{self.tag}>"
         close_tag = f"</{self.tag}>"
         offset = "  " * self.depth
-        if self.value is None:
+        if self.__value is None:
             val_to_write = None
         else:
-            val_to_write = str(self.value)
+            val_to_write = str(self.__value)
         return [offset, open_tag, val_to_write, close_tag]
 
     def to_xml(self, filepath):
@@ -115,8 +128,8 @@ class XMLElement:
         output += underline + self.tag + end
         if self.attribute:
             output += f' ({self.attribute[0]}="{self.attribute[1]}")'
-        if self.value:
-            output += ": " + str(self.value)
+        if self.__value:
+            output += ": " + str(self.__value)
         output += max((60 - len(output)), 5) * " " + str(self.path)
         output += "\n"
         return output
