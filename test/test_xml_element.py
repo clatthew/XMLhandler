@@ -57,6 +57,46 @@ class Testadd_child:
         assert root_element.last_child.last_child.root is root_element
 
 
+class Testpath:
+    @mark.it("Root element has path []")
+    def test_root_path(self, root_element):
+        assert root_element.path == []
+
+    @mark.it("First child added to root element has path [0]")
+    def test_first_child_path(self, root_element):
+        test_child = XMLElement("book")
+        root_element.add_child(test_child)
+        assert test_child.path == [0]
+
+    @mark.it(
+        "Third child added to first child added to root element has path [0, 2]. Path is correct, irrelevant of what order elements were added."
+    )
+    def test_first_child_third_child_path(self, root_element):
+        test_child1 = XMLElement("book", is_root=True)
+        test_child2 = XMLElement("title")
+        test_child3 = XMLElement("length")
+        test_child4 = XMLElement("price")
+        test_child1.add_child(test_child2)
+        test_child1.add_child(test_child3)
+        test_child1.add_child(test_child4)
+        root_element.add_child(test_child1)
+        assert test_child4.path == [0, 2]
+
+    @mark.it("That child's second child has path [0, 2, 1]")
+    def test_first_child_third_child_child_path(self, root_element):
+        test_child1 = XMLElement("book", is_root=True)
+        test_child2 = XMLElement("title")
+        test_child3 = XMLElement("length")
+        test_child4 = XMLElement("price")
+        root_element.add_child(test_child1)
+        root_element.last_child.add_child(test_child2)
+        root_element.last_child.add_child(test_child3)
+        root_element.last_child.add_child(test_child4)
+        test_child4.make_child("euro", value=20)
+        test_child4.make_child("pound", value=18)
+        assert test_child4.last_child.path == [0, 2, 1]
+
+
 class Testmake_child:
     @mark.it("make_child adds an instance of XMLElement to children")
     def test_add_child_instance(self, root_element):
@@ -281,25 +321,24 @@ class Test_make_xml_tags:
         expected = ["    ", f"<{tag}>", "555", f"</{tag}>"]
         assert root_element.last_child.last_child.make_xml_tags() == expected
 
+
 class Testto_xml:
     @mark.it("Forms the correct XML file for the bookstore data")
     def test_correct_xml_output(self):
         # generate pkl file of the bookstore based on bookstore.xml
-        build_bookstore_file('pkl')
+        build_bookstore_file("pkl")
         # load the pkl file
-        with open ('book_store/bookstore.pkl', 'rb') as f:
+        with open("book_store/bookstore.pkl", "rb") as f:
             test_tree = load(f)
         # send the object stored in the pkl file to xml using to_xml
-        test_tree.to_xml('book_store/test_xml.xml')
+        test_tree.to_xml("book_store/test_xml.xml")
         # read the resulting xml file
-        with open ('book_store/test_xml.xml') as f:
+        with open("book_store/test_xml.xml") as f:
             test_data = f.readlines()
         # read the original xml
-        with open ('book_store/bookstore.xml') as f:
+        with open("book_store/bookstore.xml") as f:
             bookstore_data = f.readlines()
         # delete the created files
-        os.remove('book_store/test_xml.xml')
+        os.remove("book_store/test_xml.xml")
         # compare the generated xml to the original
         assert bookstore_data == test_data
-
-# remove by 
