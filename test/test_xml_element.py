@@ -1,6 +1,8 @@
 from pytest import mark, fixture, raises
 from src.xml_element import XMLElement
 from pickle import load
+from book_store.book_store import build_bookstore_file
+import os
 
 
 @fixture(scope="function")
@@ -165,7 +167,7 @@ class Testsize:
 
     @mark.it("Correcrtly returns size of nested tree")
     def test_deep_size(self):
-        with open("test_data/bookstore.pkl", "rb") as f:
+        with open("book_store/bookstore.pkl", "rb") as f:
             loaded_tree = load(f)
         assert loaded_tree.size == 16
 
@@ -265,3 +267,39 @@ class Test_make_xml_tags:
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f'<{tag} quality="terrible">', "Harry Potter", f"</{tag}>"]
         assert root_element.last_child.last_child.make_xml_tags() == expected
+
+    @mark.it("Leaf element with numerical value has correct XML tags")
+    def test_value_tags_int(self, root_element):
+        tag = root_element.tag
+        test_parent = XMLElement(
+            "book", attribute=("category", "children"), is_root=True
+        )
+        test_child = XMLElement("price", value=555)
+        test_parent.add_child(test_child)
+        root_element.add_child(test_parent)
+        tag = root_element.last_child.last_child.tag
+        expected = ["    ", f"<{tag}>", "555", f"</{tag}>"]
+        assert root_element.last_child.last_child.make_xml_tags() == expected
+
+class Testto_xml:
+    @mark.it("Forms the correct XML file for the bookstore data")
+    def test_correct_xml_output(self):
+        # generate pkl file of the bookstore based on bookstore.xml
+        build_bookstore_file('pkl')
+        # load the pkl file
+        with open ('book_store/bookstore.pkl', 'rb') as f:
+            test_tree = load(f)
+        # send the object stored in the pkl file to xml using to_xml
+        test_tree.to_xml('book_store/test_xml.xml')
+        # read the resulting xml file
+        with open ('book_store/test_xml.xml') as f:
+            test_data = f.readlines()
+        # read the original xml
+        with open ('book_store/bookstore.xml') as f:
+            bookstore_data = f.readlines()
+        # delete the created files
+        os.remove('book_store/test_xml.xml')
+        # compare the generated xml to the original
+        assert bookstore_data == test_data
+
+
