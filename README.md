@@ -13,10 +13,10 @@
 - save internal XML structure to pickle ✅
 - open from pickle ✅
 
-### edit file ✴️ 
+### edit file ✅
 - add children ✅
 - add siblings ✅
-- edit attributes and values
+- edit attributes and values ✅
 - preview tree structure in the terminal ✅
 - remove items ✅
 
