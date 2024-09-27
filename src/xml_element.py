@@ -114,6 +114,7 @@ class XMLElement:
             output += f' ({self.attribute[0]}="{self.attribute[1]}"): '
         if self.value:
             output += ": " + str(self.value)
+        output += (60 - len(output)) * " " + str(self.path)
         output += "\n"
         return output
 
