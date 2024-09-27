@@ -230,9 +230,8 @@ class Testsize:
 
     @mark.it("Correcrtly returns size of nested tree")
     def test_deep_size(self):
-        with open("book_store/bookstore.pkl", "rb") as f:
-            loaded_tree = load(f)
-        assert loaded_tree.size == 16
+        test_tree = build_bookstore_file()
+        assert test_tree.size == 16
 
 
 # This should be made into a true interator
