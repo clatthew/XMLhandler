@@ -25,7 +25,11 @@
 
 ### dump to XML file ✴️
 - dump object structure into a well-formed XML file ✅
-- **still to do:** properly handle characters < > & ' "
+- properly handle characters < > & ' "
+
+### user-friendly✴️
+- developed using TDD with full test coverage✅
+- helpful docstrings
 
 ## XML file structure
 > notes from [w3schools](https://www.w3schools.com/xml/)
