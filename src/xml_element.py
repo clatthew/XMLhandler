@@ -35,8 +35,8 @@ class XMLElement:
 
     def to_pickle(self, filepath=None):
         if not filepath:
-            filepath = self.tag
-        with open(f"{filepath}.pkl", "wb") as f:
+            filepath = f"{self.tag}.pkl"
+        with open(filepath, "wb") as f:
             dump(self, f)
 
     @property
@@ -66,7 +66,29 @@ class XMLElement:
             open_tag = f"<{self.tag}>"
         close_tag = f"</{self.tag}>"
         offset = "  " * self.depth
-        return [offset, open_tag, self.value, close_tag]
+        if self.value is None:
+            val_to_write = None
+        else:
+            val_to_write = str(self.value)
+        return [offset, open_tag, val_to_write, close_tag]
+
+    def to_xml(self, filepath):
+        f = open(filepath, "w")
+        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        self.write_xml_body(f)
+
+        f.close()
+
+    def write_xml_body(self, f):
+        if self.children:
+            f.write(self.make_xml_tags()[0]+self.make_xml_tags()[1]+"\n")
+            for child in self.children:
+                child.write_xml_body(f)
+            f.write(self.make_xml_tags()[0]+self.make_xml_tags()[3])
+            if not self.is_root:
+                f.write("\n")
+        else:
+            f.write("".join(self.make_xml_tags())+"\n")
 
     @property
     def descendants(self):
