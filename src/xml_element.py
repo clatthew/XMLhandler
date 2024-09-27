@@ -59,6 +59,15 @@ class XMLElement:
     def size(self):
         return len(self.descendants)
 
+    def make_xml_tags(self):
+        if self.attribute:
+            open_tag = f'<{self.tag} {self.attribute[0]}="{self.attribute[1]}">'
+        else:
+            open_tag = f"<{self.tag}>"
+        close_tag = f"</{self.tag}>"
+        offset = "  " * self.depth
+        return [offset, open_tag, self.value, close_tag]
+
     @property
     def descendants(self):
         descendant_list = [self]
@@ -83,9 +92,8 @@ class XMLElement:
 
 #     def __iter__(self):
 #         return self
-    
+
 #     def __next__(self):
 #         yield self.iterable
 #         for child in self.iterable.children:
 #             yield iter(child)
-        

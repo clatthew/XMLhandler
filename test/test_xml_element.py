@@ -169,6 +169,7 @@ class Testsize:
             loaded_tree = load(f)
         assert loaded_tree.size == 16
 
+
 # This should be made into a true interator
 class Test__iter__:
     @mark.it("Root element's descendants are only itself")
@@ -218,3 +219,49 @@ class Test__iter__:
             root_element,
         ]:
             assert xmlelt in descendants
+
+
+class Test_make_xml_tags:
+    @mark.it("Root element has correct XML tags")
+    def test_root_tags(self, root_element):
+        tag = root_element.tag
+        expected = ["", f"<{tag}>", None, f"</{tag}>"]
+        assert root_element.make_xml_tags() == expected
+
+    @mark.it("Element with attribute has correct XML tags")
+    def test_attribute_tags(self, root_element):
+        test_parent = XMLElement(
+            "book", attribute=("category", "children"), is_root=True
+        )
+        root_element.add_child(test_parent)
+        tag = root_element.last_child.tag
+        expected = ["  ", f'<{tag} category="children">', None, f"</{tag}>"]
+        assert root_element.last_child.make_xml_tags() == expected
+
+    @mark.it("Leaf element with value has correct XML tags")
+    def test_value_tags(self, root_element):
+        tag = root_element.tag
+        test_parent = XMLElement(
+            "book", attribute=("category", "children"), is_root=True
+        )
+        test_child = XMLElement("title", value="Harry Potter")
+        test_parent.add_child(test_child)
+        root_element.add_child(test_parent)
+        tag = root_element.last_child.last_child.tag
+        expected = ["    ", f"<{tag}>", "Harry Potter", f"</{tag}>"]
+        assert root_element.last_child.last_child.make_xml_tags() == expected
+
+    @mark.it("Leaf element with value and attribute has correct XML tags")
+    def test_value_attribute_tags(self, root_element):
+        tag = root_element.tag
+        test_parent = XMLElement(
+            "book", attribute=("category", "children"), is_root=True
+        )
+        test_child = XMLElement(
+            "title", attribute=("quality", "terrible"), value="Harry Potter"
+        )
+        test_parent.add_child(test_child)
+        root_element.add_child(test_parent)
+        tag = root_element.last_child.last_child.tag
+        expected = ["    ", f'<{tag} quality="terrible">', "Harry Potter", f"</{tag}>"]
+        assert root_element.last_child.last_child.make_xml_tags() == expected
