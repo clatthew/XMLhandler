@@ -129,29 +129,32 @@ class Testmake_sibling:
         for child in root_element.children:
             assert child.tag == "book"
 
+
 class Testadd_sibling:
     @mark.it("add_sibling adds the passed object to its parent's children")
     def test_add_sibling_list(self, root_element):
-        test_child1 = XMLElement('book')
-        test_child2 = XMLElement('book')
+        test_child1 = XMLElement("book")
+        test_child2 = XMLElement("book")
         root_element.add_child(test_child1)
         test_child1.add_sibling(test_child2)
         assert test_child2 in root_element.children
+
     @mark.it("add_sibling changes the new sibling's root")
     def test_add_sibling_root(self, root_element):
-        test_child1 = XMLElement('book')
-        test_child2 = XMLElement('book')
+        test_child1 = XMLElement("book")
+        test_child2 = XMLElement("book")
         root_element.add_child(test_child1)
         test_child1.add_sibling(test_child2)
         assert test_child2.root is root_element
 
     @mark.it("add_sibling changes the new sibling's parent")
     def test_add_sibling_parent(self, root_element):
-        test_child1 = XMLElement('book')
-        test_child2 = XMLElement('book')
+        test_child1 = XMLElement("book")
+        test_child2 = XMLElement("book")
         root_element.add_child(test_child1)
         test_child1.add_sibling(test_child2)
         assert test_child2.parent is root_element
+
 
 class Testlast_child:
     @mark.it("last_child returns only child")
@@ -293,9 +296,7 @@ class Test_make_xml_tags:
 
     @mark.it("Element with attribute has correct XML tags")
     def test_attribute_tags(self, root_element):
-        test_parent = XMLElement(
-            "book", attribute=("category", "children")
-        )
+        test_parent = XMLElement("book", attribute=("category", "children"))
         root_element.add_child(test_parent)
         tag = root_element.last_child.tag
         expected = ["  ", f'<{tag} category="children">', None, f"</{tag}>"]
@@ -304,9 +305,7 @@ class Test_make_xml_tags:
     @mark.it("Leaf element with value has correct XML tags")
     def test_value_tags(self, root_element):
         tag = root_element.tag
-        test_parent = XMLElement(
-            "book", attribute=("category", "children")
-        )
+        test_parent = XMLElement("book", attribute=("category", "children"))
         test_child = XMLElement("title", value="Harry Potter")
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -317,9 +316,7 @@ class Test_make_xml_tags:
     @mark.it("Leaf element with value and attribute has correct XML tags")
     def test_value_attribute_tags(self, root_element):
         tag = root_element.tag
-        test_parent = XMLElement(
-            "book", attribute=("category", "children")
-        )
+        test_parent = XMLElement("book", attribute=("category", "children"))
         test_child = XMLElement(
             "title", attribute=("quality", "terrible"), value="Harry Potter"
         )
@@ -332,9 +329,7 @@ class Test_make_xml_tags:
     @mark.it("Leaf element with numerical value has correct XML tags")
     def test_value_tags_int(self, root_element):
         tag = root_element.tag
-        test_parent = XMLElement(
-            "book", attribute=("category", "children")
-        )
+        test_parent = XMLElement("book", attribute=("category", "children"))
         test_child = XMLElement("price", value=555)
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -461,22 +456,27 @@ class Testremove_from_path:
         assert test_child4 not in list(root_element)
         assert test_child5 not in list(root_element)
 
+
 class Testvalue:
     @mark.it("Value cannot be added to an element with children")
     def test_value_children(self, root_element):
-        root_element.make_child('book')
+        root_element.make_child("book")
         with raises(ValueError) as err:
             root_element.value = "hello"
-        assert str(err.value) == 'Cannot add value to an element with children'
+        assert str(err.value) == "Cannot add value to an element with children"
+
     @mark.it("Children cannot be added to an element with a value")
     def test_children_value(self, root_element):
         root_element.value = "hello"
         with raises(ValueError) as err:
-            root_element.make_child('hello')
-        assert str(err.value) == "Cannot add children to an element with a value. Please set value to None."
+            root_element.make_child("hello")
+        assert (
+            str(err.value)
+            == "Cannot add children to an element with a value. Please set value to None."
+        )
 
     @mark.it("Value can be updated")
     def test_value_update(self, root_element):
-        root_element.make_child('book', value='the wasp factory')
-        root_element.last_child.value = 'The Wasp Factory'
-        assert root_element.last_child.value == 'The Wasp Factory'
+        root_element.make_child("book", value="the wasp factory")
+        root_element.last_child.value = "The Wasp Factory"
+        assert root_element.last_child.value == "The Wasp Factory"
