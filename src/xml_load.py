@@ -12,14 +12,14 @@ def get_element_from_line(line):
     tag_inner_start = line.index("<") + 1 + stop_tag
     tag_inner_stop = line.index(">")
     tag_inner = line[tag_inner_start:tag_inner_stop]
+    tag_name = tag_inner.split()[0]
 
     attribute = None
     if "=" in tag_inner:
         attribute_list = tag_inner.split()[1].split("=")
         attribute_list[1] = attribute_list[1][1:-1]
         attribute = tuple(attribute_list)
-
-    tag_name = tag_inner.split()[0]
+    
 
     value = None
     if line.count("<") == 2:
