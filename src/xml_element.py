@@ -8,11 +8,14 @@ class XMLElement:
         self.tag = tag
         self.attribute = attribute
         self.__value = value
-        self.is_root = is_root
         self.children = []
         self.parent = parent
         if is_root:
             self.root = self
+
+    @property
+    def is_root(self):
+        return self.root is self
 
     @property
     def value(self):
@@ -39,7 +42,7 @@ class XMLElement:
             raise ValueError("Cannot add children to an element with a value. Please set value to None.")
         self.children.append(new_child)
         new_child.parent = self
-        new_child.is_root = False
+        # new_child.is_root = False
         for xmlelt in new_child.descendants:
             xmlelt.root = self.root
 
