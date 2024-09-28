@@ -49,7 +49,7 @@ def test_prefef_refs():
 
 @mark.skip()
 @mark.it(
-    "Loading from predef_entity_refs.xml to object structure results in object structure with the entity referecnes replaced with their actual values"
+    "Loading from predef_entity_refs.xml to object structure results in object structure with the entity references replaced with their actual values"
 )
 def test_predef_refs_replace():
     test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")
