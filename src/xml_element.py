@@ -97,11 +97,9 @@ class XMLElement:
         return [offset, open_tag, val_to_write, close_tag]
 
     def to_xml(self, filepath):
-        f = open(filepath, "w")
-        f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
-        self.write_xml_body(f)
-
-        f.close()
+        with open(filepath, "w") as f:
+            f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+            self.write_xml_body(f)
 
     def write_xml_body(self, f):
         if self.children:
