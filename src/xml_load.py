@@ -27,7 +27,7 @@ def get_element_from_line(line):
         value_start = line.index(">") + 1
         value_end = line.index("<", first_open_index + 1)
         value = line[value_start:value_end]
-
+    print(tag_name, value)
     if not stop_tag:
         return XMLElement(tag_name, attribute, value)
 
@@ -42,7 +42,7 @@ def load_xml_from_file(filepath):
             element = get_element_from_line(line)
             if element:
                 parent.add_child(element)
-                if not element.value:
+                if element.value is None:
                     parent = element
             else:
                 parent = parent.parent
