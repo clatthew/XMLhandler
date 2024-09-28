@@ -3,7 +3,7 @@ from pickle import dump
 
 class XMLElement:
     def __init__(
-        self, tag: str, attribute=None, value=None, parent=None, is_root=False
+        self, tag: str, attribute=None, value=None, parent=None
     ):
         self.tag = tag
         self.attribute = attribute
@@ -41,7 +41,6 @@ class XMLElement:
             raise ValueError("Cannot add children to an element with a value. Please set value to None.")
         self.children.append(new_child)
         new_child.parent = self
-        # new_child.is_root = False
         for xmlelt in new_child.descendants:
             xmlelt.root = self.root
 
