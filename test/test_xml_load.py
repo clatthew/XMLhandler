@@ -46,6 +46,7 @@ def test_prefef_refs():
     os.remove("test_data/entity_refs/test_xml.xml")
     assert original_data == test_data
 
+
 @mark.skip()
 @mark.it(
     "Loading from predef_entity_refs.xml to object structure results in object structure with the entity referecnes replaced with their actual values"
