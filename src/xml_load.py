@@ -19,7 +19,6 @@ def get_element_from_line(line):
         attribute_list = tag_inner.split()[1].split("=")
         attribute_list[1] = attribute_list[1][1:-1]
         attribute = tuple(attribute_list)
-    
 
     value = None
     if line.count("<") == 2:
