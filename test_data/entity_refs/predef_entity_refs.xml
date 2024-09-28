@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <entityTest>
   <predefined>2 &lt; 5</predefined>
-  <predefined>5 &lt; 2</predefined>
+  <predefined>5 &gt; 2</predefined>
   <predefined>House &amp; Garden</predefined>
   <predefined>Matthew's Computer</predefined>
   <predefined>The computer is "old"</predefined>

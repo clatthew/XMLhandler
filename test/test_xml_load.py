@@ -45,3 +45,15 @@ def test_prefef_refs():
         original_data = f.readlines()
     os.remove("test_data/entity_refs/test_xml.xml")
     assert original_data == test_data
+
+@mark.skip()
+@mark.it(
+    "Loading from predef_entity_refs.xml to object structure results in object structure with the entity referecnes replaced with their actual values"
+)
+def test_predef_refs_replace():
+    test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")
+    assert test_tree.get_from_path([0]).value == "2 < 5"
+    assert test_tree.get_from_path([1]).value == "5 > 2"
+    assert test_tree.get_from_path([2]).value == "House & Garden"
+    assert test_tree.get_from_path([3]).value == "Matthew's Computer"
+    assert test_tree.get_from_path([4]).value == 'The computer is "old"'
