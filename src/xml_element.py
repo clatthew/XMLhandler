@@ -2,12 +2,12 @@ from pickle import dump
 
 
 class XMLElement:
-    def __init__(self, tag: str, attribute=None, value=None, parent=None):
+    def __init__(self, tag: str, attribute=None, value=None):
         self.tag = tag
         self.attribute = attribute
         self.__value = value
         self.children = []
-        self.parent = parent
+        self.parent = None
         self.root = self
 
     @property
