@@ -10,8 +10,7 @@ class XMLElement:
         self.__value = value
         self.children = []
         self.parent = parent
-        if is_root:
-            self.root = self
+        self.root = self
 
     @property
     def is_root(self):
