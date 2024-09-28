@@ -1,24 +1,23 @@
 from pytest import mark, fixture, raises
 from src.xml_element import XMLElement
 from pickle import load
-from book_store.book_store import build_bookstore_file
+from test_data.book_store.book_store import build_bookstore_file
 import os
 
 
 @fixture(scope="function")
 def root_element():
-    return XMLElement("bookstore", is_root=True)
+    return XMLElement("bookstore")
 
 
 class Test__init__:
     @mark.it(
-        "XMLElement is initialised with tag, attribute, value, root, children, parent and root by default"
+        "XMLElement is initialised with tag, attribute, value, children, parent and root by default"
     )
     def test_default_vals(self, root_element):
         assert "tag" in dir(root_element)
         assert "attribute" in dir(root_element)
         assert "value" in dir(root_element)
-        assert "is_root" in dir(root_element)
         assert "children" in dir(root_element)
         assert "parent" in dir(root_element)
         assert "root" in dir(root_element)
@@ -37,7 +36,7 @@ class Testadd_child:
 
     @mark.it("Added child's is_root is false")
     def test_correct_root(self, root_element):
-        test_child = XMLElement("book", is_root=True)
+        test_child = XMLElement("book")
         root_element.add_child(test_child)
         assert not root_element.last_child.is_root
 
@@ -49,7 +48,7 @@ class Testadd_child:
 
     @mark.it("Added child's descendants' roots match its parent's")
     def test_correct_root_deep(self, root_element):
-        test_parent = XMLElement("book", is_root=True)
+        test_parent = XMLElement("book")
         test_child = XMLElement("title")
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -72,7 +71,7 @@ class Testpath:
         "Third child added to first child added to root element has path [0, 2]. Path is correct, irrelevant of what order elements were added."
     )
     def test_first_child_third_child_path(self, root_element):
-        test_child1 = XMLElement("book", is_root=True)
+        test_child1 = XMLElement("book")
         test_child2 = XMLElement("title")
         test_child3 = XMLElement("length")
         test_child4 = XMLElement("price")
@@ -84,7 +83,7 @@ class Testpath:
 
     @mark.it("That child's second child has path [0, 2, 1]")
     def test_first_child_third_child_child_path(self, root_element):
-        test_child1 = XMLElement("book", is_root=True)
+        test_child1 = XMLElement("book")
         test_child2 = XMLElement("title")
         test_child3 = XMLElement("length")
         test_child4 = XMLElement("price")
@@ -295,7 +294,7 @@ class Test_make_xml_tags:
     @mark.it("Element with attribute has correct XML tags")
     def test_attribute_tags(self, root_element):
         test_parent = XMLElement(
-            "book", attribute=("category", "children"), is_root=True
+            "book", attribute=("category", "children")
         )
         root_element.add_child(test_parent)
         tag = root_element.last_child.tag
@@ -306,7 +305,7 @@ class Test_make_xml_tags:
     def test_value_tags(self, root_element):
         tag = root_element.tag
         test_parent = XMLElement(
-            "book", attribute=("category", "children"), is_root=True
+            "book", attribute=("category", "children")
         )
         test_child = XMLElement("title", value="Harry Potter")
         test_parent.add_child(test_child)
@@ -319,7 +318,7 @@ class Test_make_xml_tags:
     def test_value_attribute_tags(self, root_element):
         tag = root_element.tag
         test_parent = XMLElement(
-            "book", attribute=("category", "children"), is_root=True
+            "book", attribute=("category", "children")
         )
         test_child = XMLElement(
             "title", attribute=("quality", "terrible"), value="Harry Potter"
@@ -334,7 +333,7 @@ class Test_make_xml_tags:
     def test_value_tags_int(self, root_element):
         tag = root_element.tag
         test_parent = XMLElement(
-            "book", attribute=("category", "children"), is_root=True
+            "book", attribute=("category", "children")
         )
         test_child = XMLElement("price", value=555)
         test_parent.add_child(test_child)
@@ -350,15 +349,15 @@ class Testto_xml:
         # get bookstore object structure
         test_tree = build_bookstore_file()
         # dump it to XML
-        test_tree.to_xml("book_store/test_xml.xml")
+        test_tree.to_xml("test_data/book_store/test_xml.xml")
         # read the resulting xml file
-        with open("book_store/test_xml.xml") as f:
+        with open("test_data/book_store/test_xml.xml") as f:
             test_data = f.readlines()
         # read the sample bookstore xml
-        with open("book_store/bookstore.xml") as f:
+        with open("test_data/book_store/bookstore.xml") as f:
             bookstore_data = f.readlines()
         # delete the created test file
-        os.remove("book_store/test_xml.xml")
+        os.remove("test_data/book_store/test_xml.xml")
         # compare the generated xml to the original
         assert bookstore_data == test_data
 
@@ -382,7 +381,7 @@ class Testget_from_path:
         "Retrieves the third child added to first child added to root element when passed path [0, 2]."
     )
     def test_grandchild(self, root_element):
-        test_child1 = XMLElement("book", is_root=True)
+        test_child1 = XMLElement("book")
         test_child2 = XMLElement("title")
         test_child3 = XMLElement("length")
         test_child4 = XMLElement("price")
@@ -395,7 +394,7 @@ class Testget_from_path:
 
     @mark.it("Retrieves that child's second child when passed path [0, 2, 1]")
     def test_first_child_third_child_child_path(self, root_element):
-        test_child1 = XMLElement("book", is_root=True)
+        test_child1 = XMLElement("book")
         test_child2 = XMLElement("title")
         test_child3 = XMLElement("length")
         test_child4 = XMLElement("price")
@@ -446,7 +445,7 @@ class Testremove_from_path:
 
     @mark.it("Successfully removes element with children and updates size accordingly")
     def test_remove_element_with_kids(self, root_element):
-        test_child1 = XMLElement("book", is_root=True)
+        test_child1 = XMLElement("book")
         test_child2 = XMLElement("title")
         test_child3 = XMLElement("length")
         test_child4 = XMLElement("price")
