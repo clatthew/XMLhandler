@@ -3,6 +3,6 @@
   <predefined>2 &lt; 5</predefined>
   <predefined>5 &gt; 2</predefined>
   <predefined>House &amp; Garden</predefined>
-  <predefined>Matthew's Computer</predefined>
-  <predefined>The computer is "old"</predefined>
+  <predefined>Matthew&apos;s Computer</predefined>
+  <predefined>The computer is &quot;old&quot;</predefined>
 </entityTest>
