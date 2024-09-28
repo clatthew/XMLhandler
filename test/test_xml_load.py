@@ -21,5 +21,18 @@ def test_pathological():
         test_data = f.readlines()
     with open("test_data/leaf_without_value/leaf_without_value.xml") as f:
         original_data = f.readlines()
-    # os.remove("test_data/leaf_without_value/test_xml.xml")
+    os.remove("test_data/leaf_without_value/test_xml.xml")
+    assert original_data == test_data
+
+    
+
+@mark.it('Loading from predef_entity_refs.xml to object structure, then dumping to XML results in an XML file identical to predef_entity_refs.xml')
+def test_prefef_refs():
+    test_tree = load_xml_from_file('test_data/entity_refs/predef_entity_refs.xml')
+    test_tree.to_xml("test_data/entity_refs/test_xml.xml")
+    with open("test_data/entity_refs/test_xml.xml") as f:
+        test_data = f.readlines()
+    with open("test_data/entity_refs/predef_entity_refs.xml") as f:
+        original_data = f.readlines()
+    os.remove("test_data/entity_refs/test_xml.xml")
     assert original_data == test_data
