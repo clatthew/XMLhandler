@@ -25,9 +25,20 @@ def get_element_from_line(line):
         value_start = line.index(">") + 1
         value_end = line.index("<", tag_inner_start + 1)
         value = line[value_start:value_end]
+        value = remove_refs(value)
 
     if not stop_tag:
         return XMLElement(tag_name, attribute, value)
+
+
+def remove_refs(line):
+    refs = {"&lt;": "<", "&gt;": ">", "&amp;": "&", "&apos;": "'", "&quot;": '"'}
+    for ref in refs:
+        ref_len = len(ref)
+        while ref in line:
+            index = line.index(ref)
+            line = line[:index] + refs[ref] + line[index + ref_len :]
+    return line
 
 
 def load_xml_from_file(filepath):

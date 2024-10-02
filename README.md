@@ -75,7 +75,7 @@ entity reference | unicode symbol | name
 `&lt;` | < | less than
 `&gt;` | > | greater than
 `&amp;` | & | ampersand
-`apos;` | ' | apostrophe
+`&apos;` | ' | apostrophe
 `&quot;` | " | quotation mark
 `LF` | | new line
 
