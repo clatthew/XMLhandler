@@ -5,4 +5,5 @@
   <predefined>House &amp; Garden</predefined>
   <predefined>Matthew&apos;s Computer</predefined>
   <predefined>The computer is &quot;old&quot;</predefined>
+  <predefined type="&apos;PC&amp;Mac&apos;">The computer is &lt; slow</predefined>
 </entityTest>

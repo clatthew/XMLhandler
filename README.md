@@ -4,6 +4,8 @@
 ### XML structure ✅
 - tree structure ✅
 - all XML attributes, tags, etc ✅
+- tags with multiple attributes 🔴
+- disallow characters from tag name and attribute name 🔴
 
 ### dict 🔴
 - convert object tree structure to python dict 🔴
@@ -25,6 +27,7 @@
 - handle entity references for < > & ' " 🔴
 - handle custom entity references defined in the preamble 🔴
 - load xml_version and encoding information from preamble 🔴
+- load tags with multiple attributes 🔴
  
 ### dump to XML file ✴️
 - dump object structure into a well-formed XML file ✅
