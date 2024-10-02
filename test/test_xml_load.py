@@ -4,7 +4,7 @@ import os
 
 
 @mark.it(
-    "Loading from bookstore.xml file to object structure, then dumping to XML results in an XML file identical to bookstore.xml"
+    "Loading from bookstore.xml file to object structure, then dumping to XML, results in an XML file identical to bookstore.xml"
 )
 def test_load_and_dump_bookstore():
     test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
@@ -18,7 +18,7 @@ def test_load_and_dump_bookstore():
 
 
 @mark.it(
-    "Loading from leaf_without_value.xml to object structure, then dumping to XML results in an XML file identical to leaf_without_value.xml"
+    "Loading from leaf_without_value.xml to object structure, then dumping to XML, results in an XML file identical to leaf_without_value.xml"
 )
 def test_pathological():
     test_tree = load_xml_from_file(
@@ -34,7 +34,7 @@ def test_pathological():
 
 
 @mark.it(
-    "Loading from predef_entity_refs.xml to object structure, then dumping to XML results in an XML file identical to predef_entity_refs.xml"
+    "Loading from predef_entity_refs.xml to object structure, then dumping to XML, results in an XML file identical to predef_entity_refs.xml"
 )
 def test_prefef_refs():
     test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")

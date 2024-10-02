@@ -23,7 +23,9 @@
 ### load from XML file ✴️
 - load data and structure from XML file into the object structure ✅
 - handle entity references for < > & ' " 🔴
-
+- handle custom entity references defined in the preamble 🔴
+- load xml_version and encoding information from preamble 🔴
+ 
 ### dump to XML file ✴️
 - dump object structure into a well-formed XML file ✅
 - properly handle characters < > & ' " 🔴
