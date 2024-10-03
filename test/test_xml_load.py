@@ -58,7 +58,7 @@ def test_remove_refs_object():
     assert test_tree.get_from_path([2]).value == "House & Garden"
     assert test_tree.get_from_path([3]).value == "Matthew's Computer"
     assert test_tree.get_from_path([4]).value == 'The computer is "old"'
-    assert test_tree.get_from_path([5]).attribute == ("type", "'PC&Mac'")
+    assert test_tree.get_from_path([5]).attribute == {"type": "'PC&Mac'"}
     assert test_tree.get_from_path([5]).value == "The computer is < slow"
 
 

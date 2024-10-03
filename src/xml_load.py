@@ -16,13 +16,13 @@ def get_element_from_line(line):
     tag_name = tag_inner.split()[0]
 
     # check if line[tag_inner_stop - 1 : tag_inner_stop + 1] == "/>" for a self-closing tag
-
+    # add possibility to have multiple attributes
     attribute = None
     if "=" in tag_inner:
         attribute_list = tag_inner.split()[1].split("=")
         attribute_list[1] = attribute_list[1][1:-1]
         attribute_list[1] = remove_refs(attribute_list[1])
-        attribute = tuple(attribute_list)
+        attribute = {attribute_list[0]: attribute_list[1]}
 
     value = None
     if line.count("<") == 2:

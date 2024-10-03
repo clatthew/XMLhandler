@@ -4,11 +4,33 @@ from pickle import dump
 class XMLElement:
     def __init__(self, tag: str, attribute=None, value=None):
         self.tag = tag
-        self.attribute = attribute
+        self.attributes = {}
         self.__value = value
         self.children = []
         self.parent = None
         self.root = self
+        if attribute:
+            self.attributes = attribute
+
+
+    @property
+    def attribute(self):
+        keys = [*self.attributes][0]
+        if len(keys) == 1:
+            key = keys[0]
+            return (key, self.attributes[0][key])
+        elif len(keys) == 0:
+            return None
+        else:
+            raise IndexError('self.attribute is only usable with 0 or 1 attributes')
+
+        
+    @attribute.setter
+    def attribute(self, new_attribute: dict):
+        try:
+            self.attributes |= new_attribute
+        except:
+            raise TypeError('Added attribute must have type dict')
 
     @property
     def is_root(self):

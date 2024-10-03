@@ -296,7 +296,7 @@ class Test_make_xml_tags:
 
     @mark.it("Element with attribute has correct XML tags")
     def test_attribute_tags(self, root_element):
-        test_parent = XMLElement("book", attribute=("category", "children"))
+        test_parent = XMLElement("book", attribute={"category": "children"})
         root_element.add_child(test_parent)
         tag = root_element.last_child.tag
         expected = ["  ", f'<{tag} category="children">', None, f"</{tag}>"]
@@ -305,7 +305,7 @@ class Test_make_xml_tags:
     @mark.it("Leaf element with value has correct XML tags")
     def test_value_tags(self, root_element):
         tag = root_element.tag
-        test_parent = XMLElement("book", attribute=("category", "children"))
+        test_parent = XMLElement("book", attribute={"category": "children"})
         test_child = XMLElement("title", value="Harry Potter")
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -316,9 +316,9 @@ class Test_make_xml_tags:
     @mark.it("Leaf element with value and attribute has correct XML tags")
     def test_value_attribute_tags(self, root_element):
         tag = root_element.tag
-        test_parent = XMLElement("book", attribute=("category", "children"))
+        test_parent = XMLElement("book", attribute={"category": "children"})
         test_child = XMLElement(
-            "title", attribute=("quality", "terrible"), value="Harry Potter"
+            "title", attribute={"quality": "terrible"}, value="Harry Potter"
         )
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -329,7 +329,7 @@ class Test_make_xml_tags:
     @mark.it("Leaf element with numerical value has correct XML tags")
     def test_value_tags_int(self, root_element):
         tag = root_element.tag
-        test_parent = XMLElement("book", attribute=("category", "children"))
+        test_parent = XMLElement("book", attribute={"category": "children"})
         test_child = XMLElement("price", value=555)
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
