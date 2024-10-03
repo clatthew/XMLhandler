@@ -21,7 +21,6 @@ def get_element_from_line(line):
     attributes = None
     if "=" in tag_inner:
         attribute_list = tag_inner.split()[1:]
-        print(attribute_list)
         attributes = {}
         for attr in attribute_list:
             attr_list = attr.split("=")
