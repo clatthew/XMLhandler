@@ -2,7 +2,12 @@ from pickle import dump
 
 
 class XMLElement:
+    refs = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}
+
     def __init__(self, tag: str, attributes=None, value=None):
+        for ref in XMLElement.refs:
+            if ref in tag:
+                raise ValueError(f"Tag name may not contain {ref}")
         self.tag = tag
         self.__attributes = {}
         self.__value = value
@@ -10,6 +15,12 @@ class XMLElement:
         self.parent = None
         self.root = self
         if attributes:
+            for key in attributes:
+                for ref in XMLElement.refs:
+                    if ref in key:
+                        raise ValueError(
+                            f"Attribute key may not contain {ref}"
+                        )
             self.add_attribute(attributes)
 
     def add_attribute(self, new_attribute: dict):
@@ -97,8 +108,6 @@ class XMLElement:
     @property
     def attributes(self):
         return self.__attributes
-        
-
 
     def make_xml_tags(self):
         if self.attributes:
@@ -144,7 +153,7 @@ class XMLElement:
             output += "   " * self.parent.depth + "∟"
         output += underline + self.tag + end
         if self.attributes:
-            output += f' ({make_attribute_string(self.attributes)})'
+            output += f" ({make_attribute_string(self.attributes)})"
         if self.__value:
             output += ": " + str(self.__value)
         output += max((60 - len(output)), 5) * " " + str(self.path)
@@ -179,8 +188,7 @@ class XMLElement:
 
 
 def insert_entity_refs(string):
-    refs = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}
-    for ref in refs:
+    for ref in XMLElement.refs:
         no_to_replace = string.count(ref)
         last_index = -1
         for _ in range(no_to_replace):
@@ -188,6 +196,7 @@ def insert_entity_refs(string):
             string = string[:location] + refs[ref] + string[location + 1 :]
             last_index = location + len(ref)
     return string
+
 
 def make_attribute_string(attributes):
     attribute_string = ""

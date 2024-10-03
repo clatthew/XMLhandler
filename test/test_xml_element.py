@@ -27,6 +27,65 @@ class Test__init__:
     def test_root_element_root(self, root_element):
         assert root_element.root is root_element
 
+    @mark.it('Raises ValueError if using & in tag_name')
+    def test_ampersand_in_tag_name(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matt&Kim')
+        assert str(err.value) == "Tag name may not contain &"
+
+    @mark.it('Raises ValueError if using \' in tag_name')
+    def test_apos_in_tag_name(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matt'Kim")
+        assert str(err.value) == "Tag name may not contain '"
+
+    @mark.it('Raises ValueError if using " in tag_name')
+    def test_quote_in_tag_name(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matt"Kim')
+        assert str(err.value) == 'Tag name may not contain "'
+
+    @mark.it('Raises ValueError if using < in tag_name')
+    def test_lt_in_tag_name(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matt<Kim')
+        assert str(err.value) == "Tag name may not contain <"
+
+    @mark.it('Raises ValueError if using > in tag_name')
+    def test_gt_in_tag_name(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matt>Kim')
+        assert str(err.value) == "Tag name may not contain >"
+
+    @mark.it('Raises ValueError if using & in an attribute key')
+    def test_ampersand_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt&Kim": 'yes'})
+        assert str(err.value) == "Attribute key may not contain &"
+
+    @mark.it('Raises ValueError if using \' in an attribute key')
+    def test_apos_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt'Kim": 'yes'})
+        assert str(err.value) == "Attribute key may not contain '"
+
+    @mark.it('Raises ValueError if using " in an attribute key')
+    def test_quote_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matthew', {'Matt and Kim':0, 'Matt"Kim': 'yes'})
+        assert str(err.value) == "Attribute key may not contain \""
+
+    @mark.it('Raises ValueError if using < in an attribute key')
+    def test_lt_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt<Kim": 'yes'})
+        assert str(err.value) == "Attribute key may not contain <"
+
+    @mark.it('Raises ValueError if using > in an attribute key')
+    def test_gt_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt>Kim": 'yes'})
+        assert str(err.value) == "Attribute key may not contain >"
 
 class Testadd_child:
     @mark.it("Added child has the correct parent")
@@ -368,18 +427,20 @@ class Testto_xml:
         # compare the generated xml to the original
         assert bookstore_data == test_data
 
-    @mark.it("Handles int and float values in tag_name, attribute key and val, and value")
+    @mark.it(
+        "Handles int and float values in tag_name, attribute key and val, and value"
+    )
     def test_integer_in_val(self):
-        test_tree = load_xml_from_file('test_data/book_store/bookstore.xml')
-        test_child = XMLElement('66.6', {'amount': 56})
-        test_child.make_child('title', {'lang': 72}, 5555)
-        test_child.make_child('price', {56: 23.2}, 39.99)
+        test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
+        test_child = XMLElement("66.6", {"amount": 56})
+        test_child.make_child("title", {"lang": 72}, 5555)
+        test_child.make_child("price", {56: 23.2}, 39.99)
         test_tree.add_child(test_child)
-        test_tree.to_xml('test_data/numeric/test_xml.xml')
-        with open('test_data/numeric/test_xml.xml') as f:
+        test_tree.to_xml("test_data/numeric/test_xml.xml")
+        with open("test_data/numeric/test_xml.xml") as f:
             test_data = f.readlines()
-        os.remove('test_data/numeric/test_xml.xml')
-        with open('test_data/numeric/numeric.xml') as f:
+        os.remove("test_data/numeric/test_xml.xml")
+        with open("test_data/numeric/numeric.xml") as f:
             original_data = f.readlines()
         assert test_data == original_data
 
@@ -510,52 +571,63 @@ class Testvalue:
 
 
 class Testprint_line:
-    @mark.it('Returns correct string for root tag')
+    @mark.it("Returns correct string for root tag")
     def test_root_string(self, root_element):
         result = root_element.print_line()
-        assert 'bookstore' in result
-        assert '[]' in result
-        assert result.index('b') == 4
+        assert "bookstore" in result
+        assert "[]" in result
+        assert result.index("b") == 4
 
-    @mark.it('Returns correct string for child tag')
+    @mark.it("Returns correct string for child tag")
     def test_root_child_string(self, root_element):
-        root_element.make_child('book')
+        root_element.make_child("book")
         result = root_element.last_child.print_line()
-        assert 'book' in result
-        assert '[0]' in result
-        assert result.index('∟') == 0
-        assert result.index('b') == 5
-    @mark.it('Returns correct string for root\'s grandchild tag with attributes')
+        assert "book" in result
+        assert "[0]" in result
+        assert result.index("∟") == 0
+        assert result.index("b") == 5
+
+    @mark.it("Returns correct string for root's grandchild tag with attributes")
     def test_root_grandchild_attr(self, root_element):
-        root_element.make_child('book')
-        root_element.last_child.make_child('title', {'lang': 'en'})
+        root_element.make_child("book")
+        root_element.last_child.make_child("title", {"lang": "en"})
         result = root_element.last_child.last_child.print_line()
-        assert 'title' in result
-        assert '[0, 0]' in result
-        assert result.index('∟') == 3
-        assert result.index('t') == 8
+        assert "title" in result
+        assert "[0, 0]" in result
+        assert result.index("∟") == 3
+        assert result.index("t") == 8
 
-    @mark.it('Returns correct string for root\'s great grandchild ("leaf") tag with value')
+    @mark.it(
+        'Returns correct string for root\'s great grandchild ("leaf") tag with value'
+    )
     def test_root_greatgrandchild_val(self, root_element):
-        root_element.make_child('book')
-        root_element.last_child.make_child('title', {'lang': 'en'})
-        root_element.last_child.last_child.make_child('page', value="Once upon a time...")
+        root_element.make_child("book")
+        root_element.last_child.make_child("title", {"lang": "en"})
+        root_element.last_child.last_child.make_child(
+            "page", value="Once upon a time..."
+        )
         result = root_element.get_from_path([0, 0, 0]).print_line()
-        assert 'page' in result
-        assert 'Once upon a time...' in result
-        assert '[0, 0, 0]' in result
-        assert result.index('∟') == 6
-        assert result.index('p') == 11
+        assert "page" in result
+        assert "Once upon a time..." in result
+        assert "[0, 0, 0]" in result
+        assert result.index("∟") == 6
+        assert result.index("p") == 11
 
-    @mark.it('Returns correct string for root\'s great grandchild ("leaf") tag with value and attributes')
+    @mark.it(
+        'Returns correct string for root\'s great grandchild ("leaf") tag with value and attributes'
+    )
     def test_root_greatgrandchild_val_attr(self, root_element):
-        root_element.make_child('book')
-        root_element.last_child.make_child('title', {'lang': 'en'})
-        root_element.last_child.last_child.make_child('page', value="Once upon a time...", attributes={'number': 24, 'side': 'left'})
+        root_element.make_child("book")
+        root_element.last_child.make_child("title", {"lang": "en"})
+        root_element.last_child.last_child.make_child(
+            "page",
+            value="Once upon a time...",
+            attributes={"number": 24, "side": "left"},
+        )
         result = root_element.get_from_path([0, 0, 0]).print_line()
-        assert 'page' in result
-        assert 'Once upon a time...' in result
-        assert '[0, 0, 0]' in result
-        assert result.index('∟') == 6
-        assert result.index('p') == 11
+        assert "page" in result
+        assert "Once upon a time..." in result
+        assert "[0, 0, 0]" in result
+        assert result.index("∟") == 6
+        assert result.index("p") == 11
         assert 'number="24" side="left"' in result
