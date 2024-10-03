@@ -13,9 +13,11 @@ def get_element_from_line(line):
     tag_inner_stop = line.index(">")
     tag_inner = line[tag_inner_start:tag_inner_stop]
     tag_name = tag_inner.split()[0]
+    if not stop_tag and "/" in tag_inner:
+        tag_inner = tag_inner[:-1]
 
     # check if line[tag_inner_stop - 1 : tag_inner_stop + 1] == "/>" for a self-closing tag
-    # add possibility to have multiple attributes
+
     attributes = None
     if "=" in tag_inner:
         attribute_list = tag_inner.split()[1:]
@@ -33,6 +35,9 @@ def get_element_from_line(line):
         value_end = line.index("<", tag_inner_start + 1)
         value = line[value_start:value_end]
         value = remove_refs(value)
+
+    if line[tag_inner_stop - 1 : tag_inner_stop + 1] == "/>":
+        value = ""
 
     if not stop_tag:
         return XMLElement(tag_name, attributes, value)

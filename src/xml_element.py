@@ -118,7 +118,8 @@ class XMLElement:
         if self.attributes:
             attribute_string = ""
             for key in self.attributes:
-                attribute_string += f'{key}="{self.attributes[key]}" '
+                val = insert_entity_refs(self.attributes[key])
+                attribute_string += f'{key}="{val}" '
             attribute_string = attribute_string[:-1]
             open_tag = f'<{self.tag} {attribute_string}>'
         else:
@@ -128,7 +129,7 @@ class XMLElement:
         if self.__value is None:
             val_to_write = None
         else:
-            val_to_write = str(self.__value)
+            val_to_write = insert_entity_refs(str(self.__value))
         return [offset, open_tag, val_to_write, close_tag]
 
     def to_xml(self, filepath):
@@ -193,3 +194,14 @@ class XMLElement:
             raise IndexError("cannot remove root element")
         parent = self.get_from_path(path[:-1])
         parent.children.remove(to_remove)
+
+def insert_entity_refs(string):
+    refs = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}
+    for ref in refs:
+        no_to_replace = string.count(ref)
+        last_index = -1
+        for _ in range(no_to_replace):
+            location = string.index(ref, last_index + 1)
+            string = string[:location] + refs[ref] + string[location + 1:]
+            last_index = location + len(ref)
+    return string
