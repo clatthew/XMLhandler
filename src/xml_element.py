@@ -18,9 +18,7 @@ class XMLElement:
             for key in attributes:
                 for ref in XMLElement.refs:
                     if ref in str(key):
-                        raise ValueError(
-                            f"Attribute key may not contain {ref}"
-                        )
+                        raise ValueError(f"Attribute key may not contain {ref}")
             self.add_attribute(attributes)
 
     def add_attribute(self, new_attribute: dict):

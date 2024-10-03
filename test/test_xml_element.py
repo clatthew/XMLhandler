@@ -27,13 +27,13 @@ class Test__init__:
     def test_root_element_root(self, root_element):
         assert root_element.root is root_element
 
-    @mark.it('Raises ValueError if using & in tag_name')
+    @mark.it("Raises ValueError if using & in tag_name")
     def test_ampersand_in_tag_name(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matt&Kim')
+            root_element.make_child("Matt&Kim")
         assert str(err.value) == "Tag name may not contain &"
 
-    @mark.it('Raises ValueError if using \' in tag_name')
+    @mark.it("Raises ValueError if using ' in tag_name")
     def test_apos_in_tag_name(self, root_element):
         with raises(ValueError) as err:
             root_element.make_child("Matt'Kim")
@@ -45,47 +45,48 @@ class Test__init__:
             root_element.make_child('Matt"Kim')
         assert str(err.value) == 'Tag name may not contain "'
 
-    @mark.it('Raises ValueError if using < in tag_name')
+    @mark.it("Raises ValueError if using < in tag_name")
     def test_lt_in_tag_name(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matt<Kim')
+            root_element.make_child("Matt<Kim")
         assert str(err.value) == "Tag name may not contain <"
 
-    @mark.it('Raises ValueError if using > in tag_name')
+    @mark.it("Raises ValueError if using > in tag_name")
     def test_gt_in_tag_name(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matt>Kim')
+            root_element.make_child("Matt>Kim")
         assert str(err.value) == "Tag name may not contain >"
 
-    @mark.it('Raises ValueError if using & in an attribute key')
+    @mark.it("Raises ValueError if using & in an attribute key")
     def test_ampersand_in_attr_key(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt&Kim": 'yes'})
+            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt&Kim": "yes"})
         assert str(err.value) == "Attribute key may not contain &"
 
-    @mark.it('Raises ValueError if using \' in an attribute key')
+    @mark.it("Raises ValueError if using ' in an attribute key")
     def test_apos_in_attr_key(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt'Kim": 'yes'})
+            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt'Kim": "yes"})
         assert str(err.value) == "Attribute key may not contain '"
 
     @mark.it('Raises ValueError if using " in an attribute key')
     def test_quote_in_attr_key(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matthew', {'Matt and Kim':0, 'Matt"Kim': 'yes'})
-        assert str(err.value) == "Attribute key may not contain \""
+            root_element.make_child("Matthew", {"Matt and Kim": 0, 'Matt"Kim': "yes"})
+        assert str(err.value) == 'Attribute key may not contain "'
 
-    @mark.it('Raises ValueError if using < in an attribute key')
+    @mark.it("Raises ValueError if using < in an attribute key")
     def test_lt_in_attr_key(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt<Kim": 'yes'})
+            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt<Kim": "yes"})
         assert str(err.value) == "Attribute key may not contain <"
 
-    @mark.it('Raises ValueError if using > in an attribute key')
+    @mark.it("Raises ValueError if using > in an attribute key")
     def test_gt_in_attr_key(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child('Matthew', {'Matt and Kim':0, "Matt>Kim": 'yes'})
+            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt>Kim": "yes"})
         assert str(err.value) == "Attribute key may not contain >"
+
 
 class Testadd_child:
     @mark.it("Added child has the correct parent")
