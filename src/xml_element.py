@@ -55,17 +55,17 @@ class XMLElement:
         for xmlelt in new_child.descendants:
             xmlelt.root = self.root
 
-    def make_child(self, tag: str, attribute=None, value=None):
-        new_child = XMLElement(tag, attribute, value)
+    def make_child(self, tag: str, attributes=None, value=None):
+        new_child = XMLElement(tag, attributes, value)
         self.add_child(new_child)
 
     def add_sibling(self, new_sibling):
         self.parent.add_child(new_sibling)
 
-    def make_sibling(self, tag=None, attribute=None, value=None):
+    def make_sibling(self, tag=None, attributes=None, value=None):
         if not tag:
             tag = self.tag
-        new_sibling = XMLElement(tag, attribute, value)
+        new_sibling = XMLElement(tag, attributes, value)
         self.add_sibling(new_sibling)
 
     def to_pickle(self, filepath=None):
@@ -97,14 +97,12 @@ class XMLElement:
     @property
     def attributes(self):
         return self.__attributes
+        
+
 
     def make_xml_tags(self):
         if self.attributes:
-            attribute_string = ""
-            for key in self.attributes:
-                val = insert_entity_refs(self.attributes[key])
-                attribute_string += f'{key}="{val}" '
-            attribute_string = attribute_string[:-1]
+            attribute_string = make_attribute_string(self.attributes)
             open_tag = f"<{self.tag} {attribute_string}>"
         else:
             open_tag = f"<{self.tag}>"
@@ -145,8 +143,8 @@ class XMLElement:
         if not self.is_root:
             output += "   " * self.parent.depth + "∟"
         output += underline + self.tag + end
-        if self.attribute:
-            output += f' ({self.attribute[0]}="{self.attribute[1]}")'
+        if self.attributes:
+            output += f' ({make_attribute_string(self.attributes)})'
         if self.__value:
             output += ": " + str(self.__value)
         output += max((60 - len(output)), 5) * " " + str(self.path)
@@ -190,3 +188,11 @@ def insert_entity_refs(string):
             string = string[:location] + refs[ref] + string[location + 1 :]
             last_index = location + len(ref)
     return string
+
+def make_attribute_string(attributes):
+    attribute_string = ""
+    for key in attributes:
+        val = insert_entity_refs(str(attributes[key]))
+        attribute_string += f'{key}="{val}" '
+    attribute_string = attribute_string[:-1]
+    return attribute_string
