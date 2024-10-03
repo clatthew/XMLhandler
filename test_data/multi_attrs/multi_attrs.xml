@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bookstore>
+  <book category="cooking" pictures="lots" colour="green">
+    <title lang="en" second_lang="ar"></title>
+    <year></year>
+    <price></price>
+  </book>
+</bookstore>

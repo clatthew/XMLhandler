@@ -2,35 +2,40 @@ from pickle import dump
 
 
 class XMLElement:
-    def __init__(self, tag: str, attribute=None, value=None):
+    def __init__(self, tag: str, attributes=None, value=None):
         self.tag = tag
-        self.attributes = {}
+        self.__attributes = {}
         self.__value = value
         self.children = []
         self.parent = None
         self.root = self
-        if attribute:
-            self.attributes = attribute
+        if attributes:
+            self.add_attribute(attributes)
 
 
-    @property
-    def attribute(self):
-        keys = [*self.attributes][0]
-        if len(keys) == 1:
-            key = keys[0]
-            return (key, self.attributes[0][key])
-        elif len(keys) == 0:
-            return None
-        else:
-            raise IndexError('self.attribute is only usable with 0 or 1 attributes')
+    # @property
+    # def attribute(self):
+    #     if not self.attributes:
+    #         return None
+    #     keys = [*self.attributes]
+    #     if len(keys) == 1:
+    #         key = keys[0]
+    #         return (key, self.attributes[key])
+    #     # elif len(keys) == 0:
+    #     #     return None
+    #     else:
+    #         raise IndexError('self.attribute is only usable with 0 or 1 attributes')
 
         
-    @attribute.setter
-    def attribute(self, new_attribute: dict):
+    
+    def add_attribute(self, new_attribute: dict):
         try:
-            self.attributes |= new_attribute
+            self.__attributes |= new_attribute
         except:
             raise TypeError('Added attribute must have type dict')
+        
+    def remove_attribute(self, key):
+        del self.__attributes[key]
 
     @property
     def is_root(self):
@@ -105,9 +110,17 @@ class XMLElement:
     def size(self):
         return len(self.descendants)
 
+    @property
+    def attributes(self):
+        return self.__attributes
+
     def make_xml_tags(self):
-        if self.attribute:
-            open_tag = f'<{self.tag} {self.attribute[0]}="{self.attribute[1]}">'
+        if self.attributes:
+            attribute_string = ""
+            for key in self.attributes:
+                attribute_string += f'{key}="{self.attributes[key]}" '
+            attribute_string = attribute_string[:-1]
+            open_tag = f'<{self.tag} {attribute_string}>'
         else:
             open_tag = f"<{self.tag}>"
         close_tag = f"</{self.tag}>"

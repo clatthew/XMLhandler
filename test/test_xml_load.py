@@ -32,6 +32,17 @@ def test_pathological():
     os.remove("test_data/leaf_without_value/test_xml.xml")
     assert original_data == test_data
 
+@mark.it('Correctly load XML file containing tags with multiple attributes')
+def test_multiple_attributes():
+    test_tree = load_xml_from_file("test_data/multi_attrs/multi_attrs.xml")
+    test_tree.to_xml("test_data/multi_attrs/test_xml.xml")
+    with open("test_data/multi_attrs/test_xml.xml") as f:
+        test_data = f.readlines()
+    with open("test_data/multi_attrs/multi_attrs.xml") as f:
+        original_data = f.readlines()
+    os.remove("test_data/multi_attrs/test_xml.xml")
+    assert original_data == test_data
+
 
 @mark.skip()
 @mark.it(
@@ -49,18 +60,26 @@ def test_remove_refs_full_cycle():
 
 
 @mark.it(
-    "Loading from predef_entity_refs.xml to object structure results in object structure with the entity references replaced with their actual values"
+    "Loading from predef_entity_refs.xml to object structure results in object structure with the entity references in values replaced with their actual values"
 )
-def test_remove_refs_object():
+def test_remove_refs_values():
     test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")
     assert test_tree.get_from_path([0]).value == "2 < 5"
     assert test_tree.get_from_path([1]).value == "5 > 2"
     assert test_tree.get_from_path([2]).value == "House & Garden"
     assert test_tree.get_from_path([3]).value == "Matthew's Computer"
     assert test_tree.get_from_path([4]).value == 'The computer is "old"'
-    assert test_tree.get_from_path([5]).attribute == {"type": "'PC&Mac'"}
     assert test_tree.get_from_path([5]).value == "The computer is < slow"
 
+@mark.it(
+    "Loading from predef_entity_refs.xml to object structure results in object structure with the entity references in attributes replaced with their actual values"
+)
+def test_remove_refs_attribute():
+    test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")
+    assert test_tree.get_from_path([5]).attributes == {"type": "'PC&Mac'"}
+    test_tree = load_xml_from_file("test_data/multi_attrs/multi_attrs.xml")
+    assert test_tree.get_from_path([0]).attributes == {'category': 'cooking', 'pictures': 'lots', 'colour': 'green'}
+    assert test_tree.get_from_path([0, 0]).attributes == {'lang': 'en', 'second_lang': 'ar'}
 
 class Testremove_refs:
     @mark.it('Removes single instance of "&lt;" and replaces it with "<"')

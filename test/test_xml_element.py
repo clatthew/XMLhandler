@@ -12,11 +12,11 @@ def root_element():
 
 class Test__init__:
     @mark.it(
-        "XMLElement is initialised with tag, attribute, value, children, parent and root by default"
+        "XMLElement is initialised with tag, attributes, value, children, parent and root by default"
     )
     def test_default_vals(self, root_element):
         assert "tag" in dir(root_element)
-        assert "attribute" in dir(root_element)
+        assert "attributes" in dir(root_element)
         assert "value" in dir(root_element)
         assert "children" in dir(root_element)
         assert "parent" in dir(root_element)
@@ -105,8 +105,8 @@ class Testmake_child:
 
     @mark.it("make_child sets correct attribute")
     def test_add_child_attribute(self, root_element):
-        root_element.make_child("book", ("category", "cooking"))
-        assert root_element.children[0].attribute == ("category", "cooking")
+        root_element.make_child("book", {"category": "cooking"})
+        assert root_element.children[0].attributes == {"category": "cooking"}
 
     @mark.it("make_child sets correct value")
     def test_add_child_value(self, root_element):
@@ -296,7 +296,7 @@ class Test_make_xml_tags:
 
     @mark.it("Element with attribute has correct XML tags")
     def test_attribute_tags(self, root_element):
-        test_parent = XMLElement("book", attribute={"category": "children"})
+        test_parent = XMLElement("book", attributes={"category": "children"})
         root_element.add_child(test_parent)
         tag = root_element.last_child.tag
         expected = ["  ", f'<{tag} category="children">', None, f"</{tag}>"]
@@ -304,8 +304,7 @@ class Test_make_xml_tags:
 
     @mark.it("Leaf element with value has correct XML tags")
     def test_value_tags(self, root_element):
-        tag = root_element.tag
-        test_parent = XMLElement("book", attribute={"category": "children"})
+        test_parent = XMLElement("book", attributes={"category": "children"})
         test_child = XMLElement("title", value="Harry Potter")
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -315,10 +314,9 @@ class Test_make_xml_tags:
 
     @mark.it("Leaf element with value and attribute has correct XML tags")
     def test_value_attribute_tags(self, root_element):
-        tag = root_element.tag
-        test_parent = XMLElement("book", attribute={"category": "children"})
+        test_parent = XMLElement("book", attributes={"category": "children"})
         test_child = XMLElement(
-            "title", attribute={"quality": "terrible"}, value="Harry Potter"
+            "title", attributes={"quality": "terrible"}, value="Harry Potter"
         )
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
@@ -328,14 +326,20 @@ class Test_make_xml_tags:
 
     @mark.it("Leaf element with numerical value has correct XML tags")
     def test_value_tags_int(self, root_element):
-        tag = root_element.tag
-        test_parent = XMLElement("book", attribute={"category": "children"})
+        test_parent = XMLElement("book", attributes={"category": "children"})
         test_child = XMLElement("price", value=555)
         test_parent.add_child(test_child)
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f"<{tag}>", "555", f"</{tag}>"]
         assert root_element.last_child.last_child.make_xml_tags() == expected
+
+    @mark.it('Tags with multiple attributes have correct XML tags')
+    def test_multiple_attributes_make_tags(self, root_element):
+        root_element.make_child("book", {'category': 'children', 'rating': 'good', 'level': 'hard'})
+        expected = ["  ", '<book category="children" rating="good" level="hard">', None, '</book>']
+        result = root_element.last_child.make_xml_tags()
+        assert result == expected
 
 
 class Testto_xml:
