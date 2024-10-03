@@ -2,10 +2,10 @@ from pickle import dump
 
 
 class XMLElement:
-    refs = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}
+    predef_entities = {"&": "amp", "<": "lt", ">": "gt", "'": "apos", '"': "quot"}
 
     def __init__(self, tag: str, attributes=None, value=None):
-        for ref in XMLElement.refs:
+        for ref in XMLElement.predef_entities:
             if ref in tag:
                 raise ValueError(f"Tag name may not contain {ref}")
         self.tag = tag
@@ -16,19 +16,41 @@ class XMLElement:
         self.root = self
         if attributes:
             for key in attributes:
-                for ref in XMLElement.refs:
+                for ref in XMLElement.predef_entities:
                     if ref in str(key):
                         raise ValueError(f"Attribute key may not contain {ref}")
             self.add_attribute(attributes)
+        self.__entities = {}
+
+    @property
+    def entities(self):
+        return self.__entities.copy()
+
+    def add_entity(self, entity: dict):
+        """
+        The entity key is the thing that should be read. The entity value is what it will be displayed in the XML document.
+        """
+        if self.is_root:
+            try:
+                # for key in entity:
+                #     entity[key] = f"&{str(entity[key])};"
+                self.__entities |= entity
+            except:
+                raise TypeError("Entity must be of type dict")
+        else:
+            raise TypeError("Cannot add entity to non-root element")
 
     def add_attribute(self, new_attribute: dict):
         try:
             self.__attributes |= new_attribute
         except:
-            raise TypeError("Added attribute must have type dict")
+            raise TypeError("Attribute must be of type dict")
 
     def remove_attribute(self, key):
         del self.__attributes[key]
+
+    def remove_entity(self, key):
+        del self.__entities[key]
 
     @property
     def is_root(self):
@@ -105,11 +127,11 @@ class XMLElement:
 
     @property
     def attributes(self):
-        return self.__attributes
+        return self.__attributes.copy()
 
     def make_xml_tags(self):
         if self.attributes:
-            attribute_string = make_attribute_string(self.attributes)
+            attribute_string = self.make_attribute_string()
             open_tag = f"<{self.tag} {attribute_string}>"
         else:
             open_tag = f"<{self.tag}>"
@@ -118,12 +140,17 @@ class XMLElement:
         if self.__value is None:
             val_to_write = None
         else:
-            val_to_write = insert_entity_refs(str(self.__value))
+            val_to_write = self.insert_entity_refs(str(self.__value))
         return [offset, open_tag, val_to_write, close_tag]
 
     def to_xml(self, filepath):
         with open(filepath, "w") as f:
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+            if self.root.entities:
+                f.write(f"<!DOCTYPE {self.root.tag} [\n")
+                for entity in self.root.entities:
+                    f.write(f'<!ENTITY {self.root.entities[entity]} "{entity}">\n')
+                f.write("]>\n")
             self.write_xml_body(f)
 
     def write_xml_body(self, f):
@@ -151,7 +178,7 @@ class XMLElement:
             output += "   " * self.parent.depth + "∟"
         output += underline + self.tag + end
         if self.attributes:
-            output += f" ({make_attribute_string(self.attributes)})"
+            output += f" ({self.make_attribute_string()})"
         if self.__value:
             output += ": " + str(self.__value)
         output += max((60 - len(output)), 5) * " " + str(self.path)
@@ -184,22 +211,23 @@ class XMLElement:
         parent = self.get_from_path(path[:-1])
         parent.children.remove(to_remove)
 
+    def insert_entity_refs(self, string):
+        refs = XMLElement.predef_entities | self.root.entities
+        for ref in refs:
+            no_to_replace = string.count(ref)
+            last_index = 0
+            for _ in range(no_to_replace):
+                location = string.index(ref, last_index)
+                string = (
+                    string[:location] + "&" + refs[ref] + ";" + string[location + 1 :]
+                )
+                last_index = location + len(ref)
+        return string
 
-def insert_entity_refs(string):
-    for ref in XMLElement.refs:
-        no_to_replace = string.count(ref)
-        last_index = -1
-        for _ in range(no_to_replace):
-            location = string.index(ref, last_index + 1)
-            string = string[:location] + XMLElement.refs[ref] + string[location + 1 :]
-            last_index = location + len(ref)
-    return string
-
-
-def make_attribute_string(attributes):
-    attribute_string = ""
-    for key in attributes:
-        val = insert_entity_refs(str(attributes[key]))
-        attribute_string += f'{key}="{val}" '
-    attribute_string = attribute_string[:-1]
-    return attribute_string
+    def make_attribute_string(self):
+        attribute_string = ""
+        for key in self.attributes:
+            val = self.insert_entity_refs(str(self.attributes[key]))
+            attribute_string += f'{key}="{val}" '
+        attribute_string = attribute_string[:-1]
+        return attribute_string

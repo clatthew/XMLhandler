@@ -445,6 +445,119 @@ class Testto_xml:
             original_data = f.readlines()
         assert test_data == original_data
 
+    @mark.it("Correctly substitutes user-defined entity references into value")
+    def test_entity_refs(self, root_element):
+        root_element.add_entity({"l": "j"})
+        test_child = XMLElement("book", value="hello!")
+        root_element.add_child(test_child)
+        root_element.to_xml("test_data/def_entity_refs/test_xml.xml")
+        with open("test_data/def_entity_refs/test_xml.xml") as f:
+            test_data = f.readlines()
+        os.remove("test_data/def_entity_refs/test_xml.xml")
+        with open("test_data/def_entity_refs/def_entity_refs.xml") as f:
+            original_data = f.readlines()
+        assert test_data == original_data
+
+
+class Testadd_attribute:
+    @mark.it("Add first attribute")
+    def test_first(self, root_element):
+        root_element.add_attribute({"name": "Waterstones"})
+        assert root_element.attributes == {"name": "Waterstones"}
+
+    @mark.it("Add attribute to existing attributes")
+    def test_existing(self, root_element):
+        root_element.add_attribute({"name": "Waterstones"})
+        root_element.add_attribute({"location": "Peckham"})
+        assert root_element.attributes == {"name": "Waterstones", "location": "Peckham"}
+
+    @mark.it("Add multiple attributes simultaneously")
+    def test_multi(self, root_element):
+        root_element.add_attribute({"name": "Waterstones", "location": "Peckham"})
+        root_element.add_attribute({"street": "high street", "business": "high"})
+        assert root_element.attributes == {
+            "name": "Waterstones",
+            "location": "Peckham",
+            "street": "high street",
+            "business": "high",
+        }
+
+    @mark.it("Raises TypeError if added attribute is not a dict")
+    def test_not_dict(self, root_element):
+        with raises(TypeError) as err:
+            root_element.add_attribute(["hello"])
+        assert str(err.value) == "Attribute must be of type dict"
+
+
+class Testadd_entity:
+    @mark.it("Add first entity")
+    def test_first(self, root_element):
+        root_element.add_entity({"name": "Waterstones"})
+        assert root_element.entities == {"name": "Waterstones"}
+
+    @mark.it("Add entity to existing entities")
+    def test_existing(self, root_element):
+        root_element.add_entity({"name": "Waterstones"})
+        root_element.add_entity({"location": "Peckham"})
+        assert root_element.entities == {"name": "Waterstones", "location": "Peckham"}
+
+    @mark.it("Add multiple entities simultaneously")
+    def test_multi(self, root_element):
+        root_element.add_entity({"name": "Waterstones", "location": "Peckham"})
+        root_element.add_entity({"street": "high street", "business": "high"})
+        assert root_element.entities == {
+            "name": "Waterstones",
+            "location": "Peckham",
+            "street": "high street",
+            "business": "high",
+        }
+
+    @mark.it("Raises TypeError if added entity is not a dict")
+    def test_not_dict(self, root_element):
+        with raises(TypeError) as err:
+            root_element.add_entity(["hello"])
+        assert str(err.value) == "Entity must be of type dict"
+
+
+class Testremove_attribute:
+    @mark.it("Successfully remove existing attribute from element using attribute key")
+    def test_remove_attr(self, root_element):
+        root_element.add_attribute({"name": "Waterstones"})
+        root_element.remove_attribute("name")
+        assert not root_element.attributes
+        root_element.add_attribute({"name": "Waterstones"})
+        root_element.add_attribute({"location": "Peckham"})
+        root_element.remove_attribute("name")
+        assert root_element.attributes == {"location": "Peckham"}
+
+    @mark.it("Raises KeyError if attribute key doesn't exist")
+    def test_remove_attr_keyerror(self, root_element):
+        root_element.add_attribute({"name": "Waterstones"})
+        test_key = "ame"
+        with raises(KeyError) as err:
+            root_element.remove_attribute(test_key)
+        assert str(err.value) == f"'{test_key}'"
+
+
+class Testremove_entity:
+    @mark.it("Successfully remove existing entity from element using entity key")
+    def test_remove_ent(self, root_element):
+        root_element.add_entity({"name": "Waterstones"})
+        root_element.remove_entity("name")
+        assert not root_element.entities
+        root_element.add_entity({"name": "Waterstones"})
+        root_element.add_entity({"location": "Peckham"})
+        root_element.remove_entity("name")
+        assert root_element.entities == {"location": "Peckham"}
+
+    @mark.it("Raises KeyError if entity key doesn't exist")
+    def test_remove_ent_keyerror(self, root_element):
+        root_element.add_entity({"name": "Waterstones"})
+        test_key = "ame"
+        with raises(KeyError) as err:
+            root_element.remove_entity(test_key)
+        assert str(err.value) == f"'{test_key}'"
+
 
 class Testget_from_path:
     @mark.it("Retrieves root element when passed path []")
