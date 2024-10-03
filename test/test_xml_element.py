@@ -334,10 +334,17 @@ class Test_make_xml_tags:
         expected = ["    ", f"<{tag}>", "555", f"</{tag}>"]
         assert root_element.last_child.last_child.make_xml_tags() == expected
 
-    @mark.it('Tags with multiple attributes have correct XML tags')
+    @mark.it("Tags with multiple attributes have correct XML tags")
     def test_multiple_attributes_make_tags(self, root_element):
-        root_element.make_child("book", {'category': 'children', 'rating': 'good', 'level': 'hard'})
-        expected = ["  ", '<book category="children" rating="good" level="hard">', None, '</book>']
+        root_element.make_child(
+            "book", {"category": "children", "rating": "good", "level": "hard"}
+        )
+        expected = [
+            "  ",
+            '<book category="children" rating="good" level="hard">',
+            None,
+            "</book>",
+        ]
         result = root_element.last_child.make_xml_tags()
         assert result == expected
 

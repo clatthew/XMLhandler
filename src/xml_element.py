@@ -12,28 +12,12 @@ class XMLElement:
         if attributes:
             self.add_attribute(attributes)
 
-
-    # @property
-    # def attribute(self):
-    #     if not self.attributes:
-    #         return None
-    #     keys = [*self.attributes]
-    #     if len(keys) == 1:
-    #         key = keys[0]
-    #         return (key, self.attributes[key])
-    #     # elif len(keys) == 0:
-    #     #     return None
-    #     else:
-    #         raise IndexError('self.attribute is only usable with 0 or 1 attributes')
-
-        
-    
     def add_attribute(self, new_attribute: dict):
         try:
             self.__attributes |= new_attribute
         except:
-            raise TypeError('Added attribute must have type dict')
-        
+            raise TypeError("Added attribute must have type dict")
+
     def remove_attribute(self, key):
         del self.__attributes[key]
 
@@ -121,7 +105,7 @@ class XMLElement:
                 val = insert_entity_refs(self.attributes[key])
                 attribute_string += f'{key}="{val}" '
             attribute_string = attribute_string[:-1]
-            open_tag = f'<{self.tag} {attribute_string}>'
+            open_tag = f"<{self.tag} {attribute_string}>"
         else:
             open_tag = f"<{self.tag}>"
         close_tag = f"</{self.tag}>"
@@ -195,6 +179,7 @@ class XMLElement:
         parent = self.get_from_path(path[:-1])
         parent.children.remove(to_remove)
 
+
 def insert_entity_refs(string):
     refs = {"&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&apos;", '"': "&quot;"}
     for ref in refs:
@@ -202,6 +187,6 @@ def insert_entity_refs(string):
         last_index = -1
         for _ in range(no_to_replace):
             location = string.index(ref, last_index + 1)
-            string = string[:location] + refs[ref] + string[location + 1:]
+            string = string[:location] + refs[ref] + string[location + 1 :]
             last_index = location + len(ref)
     return string

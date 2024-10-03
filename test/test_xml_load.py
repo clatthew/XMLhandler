@@ -32,7 +32,8 @@ def test_pathological():
     os.remove("test_data/leaf_without_value/test_xml.xml")
     assert original_data == test_data
 
-@mark.it('Correctly load XML file containing tags with multiple attributes')
+
+@mark.it("Correctly load XML file containing tags with multiple attributes")
 def test_multiple_attributes():
     test_tree = load_xml_from_file("test_data/multi_attrs/multi_attrs.xml")
     test_tree.to_xml("test_data/multi_attrs/test_xml.xml")
@@ -71,6 +72,7 @@ def test_remove_refs_values():
     assert test_tree.get_from_path([4]).value == 'The computer is "old"'
     assert test_tree.get_from_path([5]).value == "The computer is < slow"
 
+
 @mark.it(
     "Loading from predef_entity_refs.xml to object structure results in object structure with the entity references in attributes replaced with their actual values"
 )
@@ -78,20 +80,31 @@ def test_remove_refs_attribute():
     test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")
     assert test_tree.get_from_path([5]).attributes == {"type": "'PC&Mac'"}
     test_tree = load_xml_from_file("test_data/multi_attrs/multi_attrs.xml")
-    assert test_tree.get_from_path([0]).attributes == {'category': 'cooking', 'pictures': 'lots', 'colour': 'green'}
-    assert test_tree.get_from_path([0, 0]).attributes == {'lang': 'en', 'second_lang': 'ar'}
+    assert test_tree.get_from_path([0]).attributes == {
+        "category": "cooking",
+        "pictures": "lots",
+        "colour": "green",
+    }
+    assert test_tree.get_from_path([0, 0]).attributes == {
+        "lang": "en",
+        "second_lang": "ar",
+    }
 
 
-@mark.it('Correctly reads self-closing tag with attributes')
+@mark.it("Correctly reads self-closing tag with attributes")
 def test_self_closing_attr():
     test_tree = load_xml_from_file("test_data/self_closing/self_closing.xml")
-    assert test_tree.get_from_path([0]).attributes == {'category': 'cooking'}
-    assert test_tree.get_from_path([0, 0]).attributes == {'lang': 'en', 'second_lang':'de'}
+    assert test_tree.get_from_path([0]).attributes == {"category": "cooking"}
+    assert test_tree.get_from_path([0, 0]).attributes == {
+        "lang": "en",
+        "second_lang": "de",
+    }
     assert not test_tree.get_from_path([]).attributes
     assert not test_tree.get_from_path([0, 1]).attributes
     assert not test_tree.get_from_path([0, 2]).attributes
 
-@mark.it('Reads self-closing tags as leaves with no value')
+
+@mark.it("Reads self-closing tags as leaves with no value")
 def test_self_closing_vals():
     test_tree = load_xml_from_file("test_data/self_closing/self_closing.xml")
     assert not test_tree.get_from_path([0]).value

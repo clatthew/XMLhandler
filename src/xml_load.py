@@ -24,7 +24,7 @@ def get_element_from_line(line):
         print(attribute_list)
         attributes = {}
         for attr in attribute_list:
-            attr_list = attr.split('=')
+            attr_list = attr.split("=")
             attr_key = attr_list[0]
             attr_val = remove_refs(attr_list[1][1:-1])
             attributes[attr_key] = attr_val
