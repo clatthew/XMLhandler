@@ -17,7 +17,7 @@ class XMLElement:
         if attributes:
             for key in attributes:
                 for ref in XMLElement.refs:
-                    if ref in key:
+                    if ref in str(key):
                         raise ValueError(
                             f"Attribute key may not contain {ref}"
                         )
@@ -193,7 +193,7 @@ def insert_entity_refs(string):
         last_index = -1
         for _ in range(no_to_replace):
             location = string.index(ref, last_index + 1)
-            string = string[:location] + refs[ref] + string[location + 1 :]
+            string = string[:location] + XMLElement.refs[ref] + string[location + 1 :]
             last_index = location + len(ref)
     return string
 
