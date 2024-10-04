@@ -462,25 +462,25 @@ class Testto_xml:
             original_data = f.readlines()
         assert test_data == original_data
 
-    @mark.it('Indents xml document with the specified tab size of 5')
+    @mark.it("Indents xml document with the specified tab size of 5")
     def test_variable_tab_size5(self):
         test_tree = build_bookstore_file()
-        test_tree.to_xml('test_data/book_store/test_xml.xml', 5)
-        with open('test_data/book_store/test_xml.xml', 'r') as f:
+        test_tree.to_xml("test_data/book_store/test_xml.xml", 5)
+        with open("test_data/book_store/test_xml.xml", "r") as f:
             test_data = f.readlines()
-        os.remove('test_data/book_store/test_xml.xml')
-        with open('test_data/book_store/bookstore5.xml', 'r') as f:
+        os.remove("test_data/book_store/test_xml.xml")
+        with open("test_data/book_store/bookstore5.xml", "r") as f:
             original_data = f.readlines()
         assert test_data == original_data
 
-    @mark.it('Indents xml document with the specified tab size of 0')
+    @mark.it("Indents xml document with the specified tab size of 0")
     def test_variable_tab_size0(self):
         test_tree = build_bookstore_file()
-        test_tree.to_xml('test_data/book_store/test_xml.xml', 0)
-        with open('test_data/book_store/test_xml.xml', 'r') as f:
+        test_tree.to_xml("test_data/book_store/test_xml.xml", 0)
+        with open("test_data/book_store/test_xml.xml", "r") as f:
             test_data = f.readlines()
-        os.remove('test_data/book_store/test_xml.xml')
-        with open('test_data/book_store/bookstore0.xml', 'r') as f:
+        os.remove("test_data/book_store/test_xml.xml")
+        with open("test_data/book_store/bookstore0.xml", "r") as f:
             original_data = f.readlines()
         assert test_data == original_data
 

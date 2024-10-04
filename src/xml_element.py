@@ -157,7 +157,9 @@ class XMLElement:
 
     def write_xml_body(self, f, tab_size):
         if self.children:
-            f.write(self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[1] + "\n")
+            f.write(
+                self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[1] + "\n"
+            )
             for child in self.children:
                 child.write_xml_body(f, tab_size)
             f.write(self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[3])
