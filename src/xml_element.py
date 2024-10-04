@@ -85,6 +85,8 @@ class XMLElement:
         new_child.parent = self
         for xmlelt in new_child.descendants:
             xmlelt.root = self.root
+            if xmlelt.entities:
+                self.add_entity(xmlelt.entities)
 
     def make_child(self, tag: str, attributes=None, value=None):
         new_child = XMLElement(tag, attributes, value)
@@ -214,14 +216,19 @@ class XMLElement:
     def insert_entity_refs(self, string):
         refs = XMLElement.predef_entities | self.root.entities
         for ref in refs:
+            # ref_len = len(ref) + 2
             no_to_replace = string.count(ref)
             last_index = 0
             for _ in range(no_to_replace):
                 location = string.index(ref, last_index)
                 string = (
-                    string[:location] + "&" + refs[ref] + ";" + string[location + 1 :]
+                    string[:location]
+                    + "&"
+                    + refs[ref]
+                    + ";"
+                    + string[location + len(ref) :]
                 )
-                last_index = location + len(ref)
+                last_index = location
         return string
 
     def make_attribute_string(self):

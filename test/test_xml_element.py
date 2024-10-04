@@ -433,6 +433,7 @@ class Testto_xml:
     )
     def test_integer_in_val(self):
         test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
+        # print(test_tree)
         test_child = XMLElement("66.6", {"amount": 56})
         test_child.make_child("title", {"lang": 72}, 5555)
         test_child.make_child("price", {56: 23.2}, 39.99)
@@ -448,8 +449,11 @@ class Testto_xml:
     @mark.it("Correctly substitutes user-defined entity references into value")
     def test_entity_refs(self, root_element):
         root_element.add_entity({"l": "j"})
+        root_element.add_attribute({"company": "Waterstones"})
         test_child = XMLElement("book", value="hello!")
+        test_child.add_entity({"Waterstones": "company"})
         root_element.add_child(test_child)
+        test_child.make_sibling("book", value="Waterstones")
         root_element.to_xml("test_data/def_entity_refs/test_xml.xml")
         with open("test_data/def_entity_refs/test_xml.xml") as f:
             test_data = f.readlines()

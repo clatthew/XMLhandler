@@ -45,7 +45,6 @@ def test_multiple_attributes():
     assert original_data == test_data
 
 
-# @mark.skip()
 @mark.it(
     "Loading from predef_entity_refs.xml to object structure, then dumping to XML, results in an XML file identical to predef_entity_refs.xml, ie. correctly replaces entity refs both when reading and writing xml"
 )
@@ -111,6 +110,14 @@ def test_self_closing_vals():
     assert not test_tree.get_from_path([0, 0]).value
     assert not test_tree.get_from_path([0, 1]).value
     assert not test_tree.get_from_path([0, 2]).value
+
+
+@mark.it(
+    "Loading from XML file with custom defined entity refs results in these entity refs being stored in the root's entities attribute"
+)
+def test_load_xml_custom_entity_refs():
+    test_tree = load_xml_from_file("test_data/def_entity_refs/def_entity_refs.xml")
+    assert test_tree.entities == {"Waterstones": "company", "l": "j"}
 
 
 class Testremove_refs:

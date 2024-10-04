@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE bookstore [
 <!ENTITY j "l">
+<!ENTITY company "Waterstones">
 ]>
-<bookstore>
+<bookstore company="&company;">
   <book>he&j;&j;o!</book>
+  <book>&company;</book>
 </bookstore>
