@@ -67,26 +67,18 @@ def load_xml_from_file(filepath):
                 line = f.readline()
 
             line = f.readline()
-        # root_element = get_element_from_line(f.readline(), entities)
         root_element = get_element_from_line(line, entities)
         current_parent = root_element
         root_element.add_entity(entities)
-        # print(f'root element: {root_element}')
         for line in f:
-            # print(root_element)
-            # print(f'line: {line}')
             element = get_element_from_line(line, entities)
             if element:
                 try:
                     current_parent.add_child(element)
                 except:
-                    # print(element)
-                    # print(current_parent)
                     current_parent.add_child(element)
                 if element.value is None:
-                    # print(f"element has None value: {element}")
                     current_parent = element
             else:
-                # print(current_parent)
                 current_parent = current_parent.parent
     return root_element

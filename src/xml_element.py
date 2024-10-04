@@ -28,7 +28,7 @@ class XMLElement:
 
     def add_entity(self, entity: dict):
         """
-        The entity key is the thing that should be read. The entity value is what it will be displayed in the XML document.
+        The entity key is its intended value. The entity value is its alias which will &appear; in the XML document.
         """
         if self.is_root:
             try:
@@ -240,3 +240,4 @@ class XMLElement:
             attribute_string += f'{key}="{val}" '
         attribute_string = attribute_string[:-1]
         return attribute_string
+    
