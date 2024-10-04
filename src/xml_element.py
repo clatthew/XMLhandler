@@ -131,21 +131,21 @@ class XMLElement:
     def attributes(self):
         return self.__attributes.copy()
 
-    def make_xml_tags(self):
+    def make_xml_tags(self, tab_size):
         if self.attributes:
             attribute_string = self.make_attribute_string()
             open_tag = f"<{self.tag} {attribute_string}>"
         else:
             open_tag = f"<{self.tag}>"
         close_tag = f"</{self.tag}>"
-        offset = "  " * self.depth
+        offset = " " * self.depth * tab_size
         if self.__value is None:
             val_to_write = None
         else:
             val_to_write = self.insert_entity_refs(str(self.__value))
         return [offset, open_tag, val_to_write, close_tag]
 
-    def to_xml(self, filepath):
+    def to_xml(self, filepath, tab_size=2):
         with open(filepath, "w") as f:
             f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
             if self.root.entities:
@@ -153,18 +153,18 @@ class XMLElement:
                 for entity in self.root.entities:
                     f.write(f'<!ENTITY {self.root.entities[entity]} "{entity}">\n')
                 f.write("]>\n")
-            self.write_xml_body(f)
+            self.write_xml_body(f, tab_size)
 
-    def write_xml_body(self, f):
+    def write_xml_body(self, f, tab_size):
         if self.children:
-            f.write(self.make_xml_tags()[0] + self.make_xml_tags()[1] + "\n")
+            f.write(self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[1] + "\n")
             for child in self.children:
-                child.write_xml_body(f)
-            f.write(self.make_xml_tags()[0] + self.make_xml_tags()[3])
+                child.write_xml_body(f, tab_size)
+            f.write(self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[3])
             if not self.is_root:
                 f.write("\n")
         else:
-            f.write("".join(self.make_xml_tags()) + "\n")
+            f.write("".join(self.make_xml_tags(tab_size)) + "\n")
 
     def __str__(self):
         output = ""

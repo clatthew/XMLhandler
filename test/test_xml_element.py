@@ -353,7 +353,7 @@ class Test_make_xml_tags:
     def test_root_tags(self, root_element):
         tag = root_element.tag
         expected = ["", f"<{tag}>", None, f"</{tag}>"]
-        assert root_element.make_xml_tags() == expected
+        assert root_element.make_xml_tags(2) == expected
 
     @mark.it("Element with attribute has correct XML tags")
     def test_attribute_tags(self, root_element):
@@ -361,7 +361,7 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.tag
         expected = ["  ", f'<{tag} category="children">', None, f"</{tag}>"]
-        assert root_element.last_child.make_xml_tags() == expected
+        assert root_element.last_child.make_xml_tags(2) == expected
 
     @mark.it("Leaf element with value has correct XML tags")
     def test_value_tags(self, root_element):
@@ -371,7 +371,7 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f"<{tag}>", "Harry Potter", f"</{tag}>"]
-        assert root_element.last_child.last_child.make_xml_tags() == expected
+        assert root_element.last_child.last_child.make_xml_tags(2) == expected
 
     @mark.it("Leaf element with value and attribute has correct XML tags")
     def test_value_attribute_tags(self, root_element):
@@ -383,7 +383,7 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f'<{tag} quality="terrible">', "Harry Potter", f"</{tag}>"]
-        assert root_element.last_child.last_child.make_xml_tags() == expected
+        assert root_element.last_child.last_child.make_xml_tags(2) == expected
 
     @mark.it("Leaf element with numerical value has correct XML tags")
     def test_value_tags_int(self, root_element):
@@ -393,7 +393,7 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f"<{tag}>", "555", f"</{tag}>"]
-        assert root_element.last_child.last_child.make_xml_tags() == expected
+        assert root_element.last_child.last_child.make_xml_tags(2) == expected
 
     @mark.it("Tags with multiple attributes have correct XML tags")
     def test_multiple_attributes_make_tags(self, root_element):
@@ -406,7 +406,7 @@ class Test_make_xml_tags:
             None,
             "</book>",
         ]
-        result = root_element.last_child.make_xml_tags()
+        result = root_element.last_child.make_xml_tags(2)
         assert result == expected
 
 
