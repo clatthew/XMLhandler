@@ -1,6 +1,5 @@
 from src.xml_element import XMLElement
 
-
 def get_element_from_line(line, entities={}):
     stop_tag = False
     for i in range(len(line)):
@@ -8,7 +7,6 @@ def get_element_from_line(line, entities={}):
             break
     if line[i : i + 2] == "</":
         stop_tag = True
-    print(f"line:{line}")
     tag_inner_start = line.index("<") + 1 + stop_tag
     tag_inner_stop = line.index(">")
     tag_inner = line[tag_inner_start:tag_inner_stop]
@@ -51,6 +49,18 @@ def remove_refs(line, def_refs={}):
             line = line[:index] + refs[ref] + line[index + ref_len :]
     return line
 
+def extract_entities(doc_info):
+    entity_list = [i for i in doc_info.split("<!") if i[0:6].upper() == "ENTITY"]
+    entities = {}
+    for element in entity_list:
+        val_start = element.index(' ') + 1
+        key_start = element.index('"') + 1
+        key_end = element.index('"', key_start)
+        val = element[val_start: key_start - 2]
+        key = element[key_start: key_end]
+        entities[key] = val
+    return entities
+
 
 def load_xml_from_file(filepath):
     with open(filepath, "r") as f:
@@ -58,14 +68,10 @@ def load_xml_from_file(filepath):
         line = f.readline()
         entities = {}
         if "<!DOCTYPE" in line:
-            line = f.readline()
-            while "]>" not in line:
-                line_list = line.split()
-                val = line_list[1]
-                key = f"{line_list[2][1:-2]}"
-                entities[key] = val
-                line = f.readline()
-
+            doc_info = line
+            while "]>" not in doc_info:
+                doc_info += f.readline()
+            entities = extract_entities(doc_info)
             line = f.readline()
         root_element = get_element_from_line(line, entities)
         current_parent = root_element

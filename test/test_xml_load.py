@@ -1,4 +1,4 @@
-from src.xml_load import load_xml_from_file, remove_refs
+from src.xml_load import load_xml_from_file, remove_refs, extract_entities
 from pytest import mark
 import os
 
@@ -208,4 +208,51 @@ class Testremove_refs:
         test_data = "&lt;&gt;&amp;&amp;&apos;&quot;&gt;&apos;"
         result = remove_refs(test_data)
         expected = "<>&&'\">'"
+        assert result == expected
+
+
+class Testextract_entities:
+    @mark.it('Extracts single entitiy from the doc_info')
+    def test_single_entity(self):
+        test_data = """
+            <!DOCTYPE bookstore [
+            <!ENTITY j "l">
+            ]>
+            """
+        result = extract_entities(test_data)
+        expected = {'l': 'j'}
+        assert result == expected
+
+    @mark.it('Extracts single entitiy from the doc_info whose value contains a space')
+    def test_single_space_entity(self):
+        test_data = """
+            <!DOCTYPE bookstore [
+            <!ENTITY j "l m">
+            ]>
+            """
+        result = extract_entities(test_data)
+        expected = {'l m': 'j'}
+        assert result == expected
+
+    @mark.it('Extracts multiple entities from the doc_info')
+    def test_multi_entity(self):
+        test_data = """
+            <!DOCTYPE bookstore [
+            <!ENTITY j "l">
+            <!ENTITY k "b">
+            <!ENTITY company "Matthew inc.">
+            ]>
+            """
+        result = extract_entities(test_data)
+        expected = {'l': 'j', 'b':'k', 'Matthew inc.':'company'}
+        assert result == expected
+
+    @mark.it('Returns empty dictionary when no entities are defined in the doc_info')
+    def test_zero_entity(self):
+        test_data = """
+            <!DOCTYPE bookstore [
+            ]>
+            """
+        result = extract_entities(test_data)
+        expected = {}
         assert result == expected
