@@ -21,7 +21,7 @@ def build_bookstore_file(filetype=None):
     root_element.last_child.make_child("price", value=39.95)
     # print(loaded_tree.tag, [child.value for child in loaded_tree.children[0].children])
     if filetype == "xml":
-        root_element.to_xml("book_store/bookstore_export.xml")
+        root_element.to_xml("book_store/bookstore_export.xml", self_closing=False)
     if filetype == "pkl":
         root_element.to_pickle("book_store/bookstore.pkl")
     return root_element

@@ -64,9 +64,19 @@ def extract_entities(doc_info):
     return entities
 
 
+def extract_metadata(preamble):
+    metadata = {}
+    for key in ["xml version", "encoding"]:
+        key_start = preamble.lower().index(key)
+        val_start = preamble.lower().index('"', key_start + len(key)) + 1
+        val_end = preamble.lower().index('"', val_start + 1)
+        metadata[key] = preamble[val_start:val_end]
+    return metadata
+
+
 def load_xml_from_file(filepath):
     with open(filepath, "r") as f:
-        preamble = f.readline()
+        metadata = extract_metadata(f.readline())
         line = f.readline()
         entities = {}
         if "<!DOCTYPE" in line:
@@ -76,6 +86,8 @@ def load_xml_from_file(filepath):
             entities = extract_entities(doc_info)
             line = f.readline()
         root_element = get_element_from_line(line, entities)
+        root_element.xml_version = metadata["xml version"]
+        root_element.encoding = metadata["encoding"]
         current_parent = root_element
         root_element.add_entity(entities)
         for line in f:

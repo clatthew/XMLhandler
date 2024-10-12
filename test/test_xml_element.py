@@ -353,7 +353,7 @@ class Test_make_xml_tags:
     def test_root_tags(self, root_element):
         tag = root_element.tag
         expected = ["", f"<{tag}>", None, f"</{tag}>"]
-        assert root_element.make_xml_tags(2) == expected
+        assert root_element.make_xml_tags(2, self_closing=False) == expected
 
     @mark.it("Element with attribute has correct XML tags")
     def test_attribute_tags(self, root_element):
@@ -361,7 +361,7 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.tag
         expected = ["  ", f'<{tag} category="children">', None, f"</{tag}>"]
-        assert root_element.last_child.make_xml_tags(2) == expected
+        assert root_element.last_child.make_xml_tags(2, self_closing=False) == expected
 
     @mark.it("Leaf element with value has correct XML tags")
     def test_value_tags(self, root_element):
@@ -371,7 +371,10 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f"<{tag}>", "Harry Potter", f"</{tag}>"]
-        assert root_element.last_child.last_child.make_xml_tags(2) == expected
+        assert (
+            root_element.last_child.last_child.make_xml_tags(2, self_closing=False)
+            == expected
+        )
 
     @mark.it("Leaf element with value and attribute has correct XML tags")
     def test_value_attribute_tags(self, root_element):
@@ -383,7 +386,10 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f'<{tag} quality="terrible">', "Harry Potter", f"</{tag}>"]
-        assert root_element.last_child.last_child.make_xml_tags(2) == expected
+        assert (
+            root_element.last_child.last_child.make_xml_tags(2, self_closing=False)
+            == expected
+        )
 
     @mark.it("Leaf element with numerical value has correct XML tags")
     def test_value_tags_int(self, root_element):
@@ -393,7 +399,10 @@ class Test_make_xml_tags:
         root_element.add_child(test_parent)
         tag = root_element.last_child.last_child.tag
         expected = ["    ", f"<{tag}>", "555", f"</{tag}>"]
-        assert root_element.last_child.last_child.make_xml_tags(2) == expected
+        assert (
+            root_element.last_child.last_child.make_xml_tags(2, self_closing=False)
+            == expected
+        )
 
     @mark.it("Tags with multiple attributes have correct XML tags")
     def test_multiple_attributes_make_tags(self, root_element):
@@ -406,7 +415,7 @@ class Test_make_xml_tags:
             None,
             "</book>",
         ]
-        result = root_element.last_child.make_xml_tags(2)
+        result = root_element.last_child.make_xml_tags(2, self_closing=False)
         assert result == expected
 
 
@@ -416,7 +425,7 @@ class Testto_xml:
         # get bookstore object structure
         test_tree = build_bookstore_file()
         # dump it to XML
-        test_tree.to_xml("test_data/book_store/test_xml.xml")
+        test_tree.to_xml("test_data/book_store/test_xml.xml", self_closing=False)
         # read the resulting xml file
         with open("test_data/book_store/test_xml.xml") as f:
             test_data = f.readlines()
@@ -438,7 +447,7 @@ class Testto_xml:
         test_child.make_child("title", {"lang": 72}, 5555)
         test_child.make_child("price", {56: 23.2}, 39.99)
         test_tree.add_child(test_child)
-        test_tree.to_xml("test_data/numeric/test_xml.xml")
+        test_tree.to_xml("test_data/numeric/test_xml.xml", self_closing=False)
         with open("test_data/numeric/test_xml.xml") as f:
             test_data = f.readlines()
         os.remove("test_data/numeric/test_xml.xml")
@@ -454,7 +463,9 @@ class Testto_xml:
         test_child.add_entity({"Waterstones": "company"})
         root_element.add_child(test_child)
         test_child.make_sibling("book", value="Waterstones")
-        root_element.to_xml("test_data/def_entity_refs/test_xml.xml")
+        root_element.to_xml(
+            "test_data/def_entity_refs/test_xml.xml", self_closing=False
+        )
         with open("test_data/def_entity_refs/test_xml.xml") as f:
             test_data = f.readlines()
         os.remove("test_data/def_entity_refs/test_xml.xml")
@@ -465,7 +476,9 @@ class Testto_xml:
     @mark.it("Indents xml document with the specified tab size of 5")
     def test_variable_tab_size5(self):
         test_tree = build_bookstore_file()
-        test_tree.to_xml("test_data/book_store/test_xml.xml", 5)
+        test_tree.to_xml(
+            "test_data/book_store/test_xml.xml", tab_size=5, self_closing=False
+        )
         with open("test_data/book_store/test_xml.xml", "r") as f:
             test_data = f.readlines()
         os.remove("test_data/book_store/test_xml.xml")
@@ -476,13 +489,56 @@ class Testto_xml:
     @mark.it("Indents xml document with the specified tab size of 0")
     def test_variable_tab_size0(self):
         test_tree = build_bookstore_file()
-        test_tree.to_xml("test_data/book_store/test_xml.xml", 0)
+        test_tree.to_xml(
+            "test_data/book_store/test_xml.xml", tab_size=0, self_closing=False
+        )
         with open("test_data/book_store/test_xml.xml", "r") as f:
             test_data = f.readlines()
         os.remove("test_data/book_store/test_xml.xml")
         with open("test_data/book_store/bookstore0.xml", "r") as f:
             original_data = f.readlines()
         assert test_data == original_data
+
+    @mark.it('Writes encoding="UTF-8" by default when encoding not set')
+    def test_default_encoding(self):
+        expected_path = "test_data/weird_metadata/default_encoding.xml"
+        result_path = "test_data/weird_metadata/test_xml.xml"
+        test_tree = XMLElement("matthew", xml_version="22")
+        test_tree.to_xml(result_path)
+        with open(expected_path, "r") as f:
+            result = f.readlines()
+        with open(expected_path, "r") as f:
+            expected = f.readlines()
+        os.remove(result_path)
+        assert result == expected
+
+    @mark.it('Writes xml version="1.0" when xml_version not set')
+    def test_default_version(self):
+        expected_path = "test_data/weird_metadata/default_xml_version.xml"
+        result_path = "test_data/weird_metadata/test_xml.xml"
+        test_tree = XMLElement("matthew", encoding="happy birthDa9y")
+        test_tree.to_xml(result_path)
+        with open(expected_path, "r") as f:
+            result = f.readlines()
+        with open(expected_path, "r") as f:
+            expected = f.readlines()
+        os.remove(result_path)
+        assert result == expected
+
+    @mark.it("Correctly writes custom metadata to a file")
+    def test_write_custom_metadata(self):
+        expected_path = "test_data/weird_metadata/weird_metadata.xml"
+        result_path = "test_data/weird_metadata/test_xml.xml"
+        test_tree = XMLElement(
+            "matthew", encoding="happy birthDa9y", xml_version="22.5"
+        )
+        test_tree.to_xml(result_path)
+        with open(expected_path, "r") as f:
+            result = f.readlines()
+        with open(expected_path, "r") as f:
+            expected = f.readlines()
+        os.remove(result_path)
+        assert result == expected
 
 
 class Testadd_attribute:

@@ -4,7 +4,9 @@ from pickle import dump
 class XMLElement:
     predef_entities = {"&": "amp", "<": "lt", ">": "gt", "'": "apos", '"': "quot"}
 
-    def __init__(self, tag: str, attributes=None, value=None):
+    def __init__(
+        self, tag: str, attributes=None, value=None, encoding=None, xml_version=None
+    ):
         for ref in XMLElement.predef_entities:
             if ref in tag:
                 raise ValueError(f"Tag name may not contain {ref}")
@@ -21,6 +23,8 @@ class XMLElement:
                         raise ValueError(f"Attribute key may not contain {ref}")
             self.add_attribute(attributes)
         self.__entities = {}
+        self.encoding = encoding
+        self.xml_version = xml_version
 
     @property
     def entities(self):
@@ -87,6 +91,7 @@ class XMLElement:
             xmlelt.root = self.root
             if xmlelt.entities:
                 self.add_entity(xmlelt.entities)
+            xmlelt.metadata = None
 
     def make_child(self, tag: str, attributes=None, value=None):
         new_child = XMLElement(tag, attributes, value)
@@ -120,6 +125,10 @@ class XMLElement:
             return 0
 
     @property
+    def is_leaf(self):
+        return not self.children
+
+    @property
     def no_children(self):
         return len(self.children)
 
@@ -131,42 +140,64 @@ class XMLElement:
     def attributes(self):
         return self.__attributes.copy()
 
-    def make_xml_tags(self, tab_size):
-        if self.attributes:
-            attribute_string = self.make_attribute_string()
-            open_tag = f"<{self.tag} {attribute_string}>"
-        else:
-            open_tag = f"<{self.tag}>"
-        close_tag = f"</{self.tag}>"
+    def make_xml_tags(self, tab_size, self_closing=True):
         offset = " " * self.depth * tab_size
+
+        if self.is_leaf and self_closing:
+            return [offset, f"<{self.tag}{self.attribute_string}/>"]
+
+        open_tag = f"<{self.tag}{self.attribute_string}>"
+
+        close_tag = f"</{self.tag}>"
+
         if self.__value is None:
             val_to_write = None
         else:
             val_to_write = self.insert_entity_refs(str(self.__value))
+        # print([offset, open_tag, val_to_write, close_tag])
         return [offset, open_tag, val_to_write, close_tag]
 
-    def to_xml(self, filepath, tab_size=2):
+    def to_xml(self, filepath, tab_size=2, self_closing=True):
+        if self.xml_version:
+            xml_version = self.xml_version
+        else:
+            xml_version = "1.0"
+        if self.encoding:
+            encoding = self.encoding
+        else:
+            encoding = "UTF-8"
         with open(filepath, "w") as f:
-            f.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+            f.write(f'<?xml version="{xml_version}" encoding="{encoding}"?>\n')
             if self.root.entities:
                 f.write(f"<!DOCTYPE {self.root.tag} [\n")
                 for entity in self.root.entities:
                     f.write(f'<!ENTITY {self.root.entities[entity]} "{entity}">\n')
                 f.write("]>\n")
-            self.write_xml_body(f, tab_size)
+            self.write_xml_body(f, tab_size, self_closing)
 
-    def write_xml_body(self, f, tab_size):
-        if self.children:
+    def write_xml_body(self, f, tab_size, self_closing):
+        if self.is_leaf:
+            f.write("".join(self.make_xml_tags(tab_size, self_closing)) + "\n")
+        else:
             f.write(
-                self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[1] + "\n"
+                self.make_xml_tags(tab_size, self_closing)[0]
+                + self.make_xml_tags(tab_size, self_closing)[1]
+                + "\n"
             )
             for child in self.children:
-                child.write_xml_body(f, tab_size)
-            f.write(self.make_xml_tags(tab_size)[0] + self.make_xml_tags(tab_size)[3])
+                child.write_xml_body(f, tab_size, self_closing)
+            f.write(
+                self.make_xml_tags(tab_size, self_closing)[0]
+                + self.make_xml_tags(tab_size, self_closing)[3]
+            )
             if not self.is_root:
                 f.write("\n")
-        else:
-            f.write("".join(self.make_xml_tags(tab_size)) + "\n")
+        # else:
+        #     tags = self.make_xml_tags(tab_size)
+        #     if tags[2]:
+        #         f.write("".join(self.make_xml_tags(tab_size)) + "\n")
+        #     else:
+        #         f.write()
 
     def __str__(self):
         output = ""
@@ -182,7 +213,7 @@ class XMLElement:
             output += "   " * self.parent.depth + "∟"
         output += underline + self.tag + end
         if self.attributes:
-            output += f" ({self.make_attribute_string()})"
+            output += f" ({self.attribute_string})"
         if self.__value:
             output += ": " + str(self.__value)
         output += max((60 - len(output)), 5) * " " + str(self.path)
@@ -233,8 +264,11 @@ class XMLElement:
                 last_index = location
         return string
 
-    def make_attribute_string(self):
-        attribute_string = ""
+    @property
+    def attribute_string(self):
+        if not self.attributes:
+            return ""
+        attribute_string = " "
         for key in self.attributes:
             val = self.insert_entity_refs(str(self.attributes[key]))
             attribute_string += f'{key}="{val}" '
