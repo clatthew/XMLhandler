@@ -1,5 +1,6 @@
 from src.xml_element import XMLElement
 
+
 def get_element_from_line(line, entities={}):
     stop_tag = False
     for i in range(len(line)):
@@ -49,15 +50,16 @@ def remove_refs(line, def_refs={}):
             line = line[:index] + refs[ref] + line[index + ref_len :]
     return line
 
+
 def extract_entities(doc_info):
     entity_list = [i for i in doc_info.split("<!") if i[0:6].upper() == "ENTITY"]
     entities = {}
     for element in entity_list:
-        val_start = element.index(' ') + 1
+        val_start = element.index(" ") + 1
         key_start = element.index('"') + 1
         key_end = element.index('"', key_start)
-        val = element[val_start: key_start - 2]
-        key = element[key_start: key_end]
+        val = element[val_start : key_start - 2]
+        key = element[key_start:key_end]
         entities[key] = val
     return entities
 

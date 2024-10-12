@@ -240,4 +240,3 @@ class XMLElement:
             attribute_string += f'{key}="{val}" '
         attribute_string = attribute_string[:-1]
         return attribute_string
-    

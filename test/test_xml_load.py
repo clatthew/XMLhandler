@@ -212,7 +212,7 @@ class Testremove_refs:
 
 
 class Testextract_entities:
-    @mark.it('Extracts single entitiy from the doc_info')
+    @mark.it("Extracts single entity from the doc_info")
     def test_single_entity(self):
         test_data = """
             <!DOCTYPE bookstore [
@@ -220,10 +220,10 @@ class Testextract_entities:
             ]>
             """
         result = extract_entities(test_data)
-        expected = {'l': 'j'}
+        expected = {"l": "j"}
         assert result == expected
 
-    @mark.it('Extracts single entitiy from the doc_info whose value contains a space')
+    @mark.it("Extracts single entity from the doc_info whose value contains a space")
     def test_single_space_entity(self):
         test_data = """
             <!DOCTYPE bookstore [
@@ -231,10 +231,10 @@ class Testextract_entities:
             ]>
             """
         result = extract_entities(test_data)
-        expected = {'l m': 'j'}
+        expected = {"l m": "j"}
         assert result == expected
 
-    @mark.it('Extracts multiple entities from the doc_info')
+    @mark.it("Extracts multiple entities from the doc_info")
     def test_multi_entity(self):
         test_data = """
             <!DOCTYPE bookstore [
@@ -244,10 +244,10 @@ class Testextract_entities:
             ]>
             """
         result = extract_entities(test_data)
-        expected = {'l': 'j', 'b':'k', 'Matthew inc.':'company'}
+        expected = {"l": "j", "b": "k", "Matthew inc.": "company"}
         assert result == expected
 
-    @mark.it('Returns empty dictionary when no entities are defined in the doc_info')
+    @mark.it("Returns empty dictionary when no entities are defined in the doc_info")
     def test_zero_entity(self):
         test_data = """
             <!DOCTYPE bookstore [
