@@ -143,7 +143,7 @@ class XMLElement:
     def make_xml_tags(self, tab_size, self_closing=True):
         offset = " " * self.depth * tab_size
 
-        if self.is_leaf and self_closing:
+        if self.is_leaf and self_closing and not self.value:
             return [offset, f"<{self.tag}{self.attribute_string}/>"]
 
         open_tag = f"<{self.tag}{self.attribute_string}>"

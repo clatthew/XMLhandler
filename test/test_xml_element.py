@@ -348,7 +348,7 @@ class Test__iter__:
             assert xmlelt in descendants
 
 
-class Test_make_xml_tags:
+class Testmake_xml_tags:
     @mark.it("Root element has correct XML tags")
     def test_root_tags(self, root_element):
         tag = root_element.tag
@@ -539,6 +539,9 @@ class Testto_xml:
             expected = f.readlines()
         os.remove(result_path)
         assert result == expected
+
+    # @mark.it('Writes leaves without value as self-closing tags by default')
+
 
 
 class Testadd_attribute:

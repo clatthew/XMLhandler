@@ -8,7 +8,7 @@ import os
 )
 def test_load_and_dump_bookstore():
     test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
-    test_tree.to_xml("test_data/book_store/test_xml.xml", self_closing=False)
+    test_tree.to_xml("test_data/book_store/test_xml.xml")
     with open("test_data/book_store/test_xml.xml") as f:
         test_data = f.readlines()
     with open("test_data/book_store/bookstore.xml") as f:
