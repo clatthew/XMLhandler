@@ -11,9 +11,9 @@ def get_element_from_line(line, entities={}):
     tag_inner_start = line.index("<") + 1 + stop_tag
     tag_inner_stop = line.index(">")
     tag_inner = line[tag_inner_start:tag_inner_stop]
-    tag_name = tag_inner.split()[0]
     if not stop_tag and "/" in tag_inner:
         tag_inner = tag_inner[:-1]
+    tag_name = tag_inner.split()[0]
 
     attributes = None
     if "=" in tag_inner:

@@ -7,13 +7,15 @@ import os
     "Loading from bookstore.xml file to object structure, then dumping to XML, results in an XML file identical to bookstore.xml"
 )
 def test_load_and_dump_bookstore():
-    test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
-    test_tree.to_xml("test_data/book_store/test_xml.xml")
-    with open("test_data/book_store/test_xml.xml") as f:
+    expected_path = "test_data/book_store/bookstore.xml"
+    result_path = "test_data/book_store/test_xml.xml"
+    test_tree = load_xml_from_file(expected_path)
+    test_tree.to_xml(result_path)
+    with open(result_path) as f:
         test_data = f.readlines()
-    with open("test_data/book_store/bookstore.xml") as f:
+    with open(expected_path) as f:
         bookstore_data = f.readlines()
-    os.remove("test_data/book_store/test_xml.xml")
+    os.remove(result_path)
     assert bookstore_data == test_data
 
 
@@ -35,13 +37,15 @@ def test_pathological():
 
 @mark.it("Correctly load XML file containing tags with multiple attributes")
 def test_multiple_attributes():
-    test_tree = load_xml_from_file("test_data/multi_attrs/multi_attrs.xml")
-    test_tree.to_xml("test_data/multi_attrs/test_xml.xml", self_closing=False)
-    with open("test_data/multi_attrs/test_xml.xml") as f:
+    expected_path = "test_data/multi_attrs/multi_attrs.xml"
+    result_path = "test_data/multi_attrs/test_xml.xml"
+    test_tree = load_xml_from_file(expected_path)
+    test_tree.to_xml(result_path, self_closing=False)
+    with open(result_path) as f:
         test_data = f.readlines()
-    with open("test_data/multi_attrs/multi_attrs.xml") as f:
+    with open(expected_path) as f:
         original_data = f.readlines()
-    os.remove("test_data/multi_attrs/test_xml.xml")
+    os.remove(result_path)
     assert original_data == test_data
 
 
@@ -49,13 +53,15 @@ def test_multiple_attributes():
     "Loading from predef_entity_refs.xml to object structure, then dumping to XML, results in an XML file identical to predef_entity_refs.xml, ie. correctly replaces entity refs both when reading and writing xml"
 )
 def test_remove_refs_full_cycle():
-    test_tree = load_xml_from_file("test_data/entity_refs/predef_entity_refs.xml")
-    test_tree.to_xml("test_data/entity_refs/test_xml.xml", self_closing=False)
-    with open("test_data/entity_refs/test_xml.xml") as f:
+    expected_path = "test_data/entity_refs/predef_entity_refs.xml"
+    result_path = "test_data/entity_refs/test_xml.xml"
+    test_tree = load_xml_from_file(expected_path)
+    test_tree.to_xml(result_path, self_closing=False)
+    with open(result_path) as f:
         test_data = f.readlines()
-    with open("test_data/entity_refs/predef_entity_refs.xml") as f:
+    with open(expected_path) as f:
         original_data = f.readlines()
-    os.remove("test_data/entity_refs/test_xml.xml")
+    os.remove(result_path)
     assert original_data == test_data
 
 

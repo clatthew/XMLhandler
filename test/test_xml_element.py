@@ -422,18 +422,20 @@ class Testmake_xml_tags:
 class Testto_xml:
     @mark.it("Forms the correct XML file for the bookstore data")
     def test_correct_xml_output(self):
+        expected_path = "test_data/book_store/bookstore.xml"
+        result_path = "test_data/book_store/test_xml.xml"
         # get bookstore object structure
         test_tree = build_bookstore_file()
         # dump it to XML
-        test_tree.to_xml("test_data/book_store/test_xml.xml", self_closing=False)
+        test_tree.to_xml(result_path, self_closing=False)
         # read the resulting xml file
-        with open("test_data/book_store/test_xml.xml") as f:
+        with open(result_path) as f:
             test_data = f.readlines()
         # read the sample bookstore xml
-        with open("test_data/book_store/bookstore.xml") as f:
+        with open(expected_path) as f:
             bookstore_data = f.readlines()
         # delete the created test file
-        os.remove("test_data/book_store/test_xml.xml")
+        os.remove(result_path)
         # compare the generated xml to the original
         assert bookstore_data == test_data
 
@@ -442,15 +444,15 @@ class Testto_xml:
     )
     def test_integer_in_val(self):
         test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
-        # print(test_tree)
         test_child = XMLElement("66.6", {"amount": 56})
         test_child.make_child("title", {"lang": 72}, 5555)
         test_child.make_child("price", {56: 23.2}, 39.99)
         test_tree.add_child(test_child)
-        test_tree.to_xml("test_data/numeric/test_xml.xml", self_closing=False)
-        with open("test_data/numeric/test_xml.xml") as f:
+        result_path = "test_data/numeric/test_xml.xml"
+        test_tree.to_xml(result_path, self_closing=False)
+        with open(result_path) as f:
             test_data = f.readlines()
-        os.remove("test_data/numeric/test_xml.xml")
+        os.remove(result_path)
         with open("test_data/numeric/numeric.xml") as f:
             original_data = f.readlines()
         assert test_data == original_data
@@ -540,7 +542,19 @@ class Testto_xml:
         os.remove(result_path)
         assert result == expected
 
-    # @mark.it('Writes leaves without value as self-closing tags by default')
+    @mark.it('Writes leaves without value as self-closing tags by default')
+    def test_self_closing_default(self):
+        expected_path = "test_data/self_closing/self_closing.xml"
+        result_path = "test_data/self_closing/test_xml.xml"
+        test_tree = load_xml_from_file(expected_path)
+        print(test_tree)
+        test_tree.to_xml(result_path)
+        with open (expected_path, 'r') as f:
+            expected = f.readlines()
+        with open (result_path, 'r') as f:
+            result = f.readlines()
+        os.remove(result_path)
+        assert result == expected
 
 
 
