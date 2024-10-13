@@ -1,6 +1,5 @@
 from pytest import mark, fixture, raises
 from src.xml_element import XMLElement
-from pickle import load
 from src.xml_load import load_xml_from_file
 from test_data.book_store.book_store import build_bookstore_file
 import os

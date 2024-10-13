@@ -1,4 +1,3 @@
-from pickle import dump
 from json import dumps
 
 
@@ -112,12 +111,6 @@ class XMLElement:
             tag = self.tag
         new_sibling = XMLElement(tag, attributes, value)
         self.add_sibling(new_sibling)
-
-    def to_pickle(self, filepath=None):
-        if not filepath:
-            filepath = f"{self.tag}.pkl"
-        with open(filepath, "wb") as f:
-            dump(self, f)
 
     @property
     def last_child(self):
