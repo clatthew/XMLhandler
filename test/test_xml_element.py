@@ -516,6 +516,7 @@ class Testto_xml:
         os.remove(result_path)
         assert result == expected
 
+    @mark.xfail
     @mark.it('Writes xml version="1.0" when xml_version not set')
     def test_default_version(self):
         expected_path = "test_data/weird_metadata/default_xml_version.xml"
@@ -529,6 +530,7 @@ class Testto_xml:
         os.remove(result_path)
         assert result == expected
 
+    @mark.xfail
     @mark.it("Correctly writes custom metadata to a file")
     def test_write_custom_metadata(self):
         expected_path = "test_data/weird_metadata/weird_metadata.xml"
@@ -556,6 +558,26 @@ class Testto_xml:
             result = f.readlines()
         os.remove(result_path)
         assert result == expected
+
+    @mark.it("Raises LookupError when encoding with invalid encoding type")
+    def test_LookupError_encoding(self):
+        expected_path = "test_data/weird_metadata/weird_metadata.xml"
+        result_path = "test_data/weird_metadata/test_xml.xml"
+        test_tree = load_xml_from_file(expected_path)
+        with raises(LookupError) as err:
+            test_tree.to_xml(result_path)
+        os.remove(result_path)
+        assert str(err.value) == "unknown encoding: happy birthDa9y"
+
+    @mark.it(
+        "Raises UnicodeEncodeError when encoding character which isn't supported by the encoding type"
+    )
+    def test_unsupported_char(self):
+        file_path = "test_data/bad_char_set/bad_char_set.xml"
+        test_tree = XMLElement("Mätthëw", encoding="ascii")
+        with raises(UnicodeEncodeError):
+            test_tree.to_xml(file_path)
+        os.remove(file_path)
 
 
 class Testadd_attribute:

@@ -28,6 +28,25 @@ class XMLElement:
         self.xml_version = xml_version
 
     @property
+    def tag(self):
+        return self.__tag
+
+    @tag.setter
+    def tag(self, new_val):
+        banned_chars = [
+            '"',
+            " ",
+            "&",
+            ";",
+            "<",
+            ">",
+        ]
+        for char in banned_chars:
+            if char in new_val:
+                raise ValueError(f'XML tag cannot contain "{char}"')
+        self.__tag = new_val
+
+    @property
     def entities(self):
         return self.__entities.copy()
 
@@ -37,8 +56,6 @@ class XMLElement:
         """
         if self.is_root:
             try:
-                # for key in entity:
-                #     entity[key] = f"&{str(entity[key])};"
                 self.__entities |= entity
             except:
                 raise TypeError("Entity must be of type dict")
@@ -166,7 +183,7 @@ class XMLElement:
             encoding = self.encoding
         else:
             encoding = "UTF-8"
-        with open(filepath, "w") as f:
+        with open(filepath, "w", encoding=encoding) as f:
             f.write(f'<?xml version="{xml_version}" encoding="{encoding}"?>\n')
             if self.root.entities:
                 f.write(f"<!DOCTYPE {self.root.tag} [\n")
