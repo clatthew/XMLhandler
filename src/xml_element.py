@@ -28,7 +28,10 @@ class XMLElement:
         for ref in list(XMLElement.predef_entities) + [" "]:
             if ref in new_val:
                 raise ValueError(f'Tag name may not contain "{ref}"')
-        self.__tag = new_val
+        if new_val[0].isalpha() or new_val[0] == "_":
+            self.__tag = new_val
+        else:
+            raise ValueError('Tag name must begin with letter or underscore')
 
     @property
     def entities(self):

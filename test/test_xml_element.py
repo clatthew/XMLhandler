@@ -69,6 +69,20 @@ class Testtag:
         with raises(ValueError) as err:
             root_element.make_child("Matt Kim")
         assert str(err.value) == 'Tag name may not contain " "'
+    
+    @mark.it("Raises ValueError if tag name does not start with letter or underscore")
+    def test_period_start(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child(".MattKim")
+        assert str(err.value) == 'Tag name must begin with letter or underscore'
+
+    @mark.it("Allows tag names which begin with an underscore")
+    def test_underscore_start(self):
+        tag_name = '_matthew'
+        test_tree = XMLElement(tag_name)
+        assert test_tree.tag == tag_name
+
+    # does the same apply to attribute keys?
 
 
 class Testadd_child:
@@ -427,7 +441,7 @@ class Testto_xml:
     )
     def test_integer_in_val(self):
         test_tree = load_xml_from_file("test_data/book_store/bookstore.xml")
-        test_child = XMLElement("66.6", {"amount": 56})
+        test_child = XMLElement("_66.6", {"amount": 56})
         test_child.make_child("title", {"lang": 72}, 5555)
         test_child.make_child("price", {56: 23.2}, 39.99)
         test_tree.add_child(test_child)

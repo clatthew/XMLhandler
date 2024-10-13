@@ -18,8 +18,8 @@
     <year>2003</year>
     <price>39.95</price>
   </book>
-  <66.6 amount="56">
+  <_66.6 amount="56">
     <title lang="72">5555</title>
     <price 56="23.2">39.99</price>
-  </66.6>
+  </_66.6>
 </bookstore>
