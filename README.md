@@ -13,10 +13,6 @@
 - convert object tree structure to python dict ✅
 - export the python dict as a json ✅
 
-### save and load objects ✅ (remove this feature)
-- save internal XML structure to pickle ✅
-- open from pickle ✅
-
 ### edit file ✅
 - add children ✅
 - add siblings ✅
