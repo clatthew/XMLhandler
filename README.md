@@ -13,7 +13,7 @@
 - convert object tree structure to python dict ✅
 - export the python dict as a json ✅
 
-### save and load objects ✅
+### save and load objects ✅ (remove this feature)
 - save internal XML structure to pickle ✅
 - open from pickle ✅
 
@@ -30,6 +30,7 @@
 - handle custom entity references defined in the preamble ✅
 - load xml_version and encoding information from preamble ✅
 - load tags with multiple attributes ✅
+- ignore comments ✅
  
 ### dump to XML file ✅
 - dump object structure into a well-formed XML file ✅

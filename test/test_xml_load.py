@@ -1,4 +1,4 @@
-from src.xml_load import load_xml_from_file, remove_refs, extract_entities
+from src.xml_load import *
 from pytest import mark
 import os
 
@@ -272,3 +272,25 @@ class Testextract_metadata:
         test_tree = load_xml_from_file("test_data/weird_metadata/weird_metadata.xml")
         assert test_tree.xml_version == str(22.5)
         assert test_tree.encoding == "happy birthDa9y"
+
+
+class Testget_next_line:
+    @mark.it("Generates non-comment lines")
+    def test_non_comment(self):
+        with open("test_data/book_store/bookstore.xml") as f:
+            assert get_next_line(f) == '<?xml version="1.0" encoding="UTF-8"?>\n'
+            assert get_next_line(f) == "<bookstore>\n"
+            assert get_next_line(f) == '  <book category="cooking">\n'
+            assert get_next_line(f) == '    <title lang="en">Everyday Italian</title>\n'
+            assert get_next_line(f) == "    <author>Giada De Laurentiis</author>\n"
+            assert get_next_line(f) == "    <year>2005</year>\n"
+
+    @mark.it("Ignores commented lines")
+    def test_comment(self):
+        with open("test_data/comments/comments.xml") as f:
+            assert get_next_line(f) == '<?xml version="1.0" encoding="UTF-8"?>\n'
+            assert get_next_line(f) == "<bookstore>\n"
+            assert get_next_line(f) == '  <book category="cooking">\n'
+            assert get_next_line(f) == '    <title lang="en">Everyday Italian</title>\n'
+            assert get_next_line(f) == "    <author>Giada De Laurentiis</author>\n"
+            assert get_next_line(f) == "    <year>2005</year>\n"

@@ -74,17 +74,25 @@ def extract_metadata(preamble):
     return metadata
 
 
+def get_next_line(f):
+    next_line = f.readline()
+    while "<!--" in next_line:
+        next_line = f.readline()
+    return next_line
+
+
 def load_xml_from_file(filepath):
     with open(filepath, "r") as f:
         metadata = extract_metadata(f.readline())
-        line = f.readline()
+        line = get_next_line(f)
         entities = {}
         if "<!DOCTYPE" in line:
             doc_info = line
             while "]>" not in doc_info:
-                doc_info += f.readline()
+                doc_info += get_next_line(f)
             entities = extract_entities(doc_info)
-            line = f.readline()
+            line = get_next_line(f)
+
         root_element = get_element_from_line(line, entities)
         root_element.xml_version = metadata["xml version"]
         root_element.encoding = metadata["encoding"]
