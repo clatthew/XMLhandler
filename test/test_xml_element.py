@@ -542,20 +542,19 @@ class Testto_xml:
         os.remove(result_path)
         assert result == expected
 
-    @mark.it('Writes leaves without value as self-closing tags by default')
+    @mark.it("Writes leaves without value as self-closing tags by default")
     def test_self_closing_default(self):
         expected_path = "test_data/self_closing/self_closing.xml"
         result_path = "test_data/self_closing/test_xml.xml"
         test_tree = load_xml_from_file(expected_path)
         print(test_tree)
         test_tree.to_xml(result_path)
-        with open (expected_path, 'r') as f:
+        with open(expected_path, "r") as f:
             expected = f.readlines()
-        with open (result_path, 'r') as f:
+        with open(result_path, "r") as f:
             result = f.readlines()
         os.remove(result_path)
         assert result == expected
-
 
 
 class Testadd_attribute:
