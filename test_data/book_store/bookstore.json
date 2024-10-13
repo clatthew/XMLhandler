@@ -1,0 +1,128 @@
+{
+  "bookstore": {
+    "attributes": {},
+    "children": [
+      {
+        "book": {
+          "attributes": {
+            "category": "cooking"
+          },
+          "children": [
+            {
+              "title": {
+                "attributes": {
+                  "lang": "en"
+                },
+                "children": [],
+                "value": "Everyday Italian"
+              }
+            },
+            {
+              "author": {
+                "attributes": {},
+                "children": [],
+                "value": "Giada De Laurentiis"
+              }
+            },
+            {
+              "year": {
+                "attributes": {},
+                "children": [],
+                "value": "2005"
+              }
+            },
+            {
+              "price": {
+                "attributes": {},
+                "children": [],
+                "value": "30"
+              }
+            }
+          ],
+          "value": null
+        }
+      },
+      {
+        "book": {
+          "attributes": {
+            "category": "children"
+          },
+          "children": [
+            {
+              "title": {
+                "attributes": {
+                  "lang": "en"
+                },
+                "children": [],
+                "value": "Harry Potter"
+              }
+            },
+            {
+              "author": {
+                "attributes": {},
+                "children": [],
+                "value": "J K. Rowling"
+              }
+            },
+            {
+              "year": {
+                "attributes": {},
+                "children": [],
+                "value": "2005"
+              }
+            },
+            {
+              "price": {
+                "attributes": {},
+                "children": [],
+                "value": "29.99"
+              }
+            }
+          ],
+          "value": null
+        }
+      },
+      {
+        "book": {
+          "attributes": {
+            "category": "web"
+          },
+          "children": [
+            {
+              "title": {
+                "attributes": {
+                  "lang": "en"
+                },
+                "children": [],
+                "value": "Learning XML"
+              }
+            },
+            {
+              "author": {
+                "attributes": {},
+                "children": [],
+                "value": "Erik T. Ray"
+              }
+            },
+            {
+              "year": {
+                "attributes": {},
+                "children": [],
+                "value": "2003"
+              }
+            },
+            {
+              "price": {
+                "attributes": {},
+                "children": [],
+                "value": "39.95"
+              }
+            }
+          ],
+          "value": null
+        }
+      }
+    ],
+    "value": null
+  }
+}

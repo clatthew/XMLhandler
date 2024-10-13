@@ -1,4 +1,5 @@
 from pickle import dump
+from json import dumps
 
 
 class XMLElement:
@@ -154,7 +155,6 @@ class XMLElement:
             val_to_write = None
         else:
             val_to_write = self.insert_entity_refs(str(self.__value))
-        # print([offset, open_tag, val_to_write, close_tag])
         return [offset, open_tag, val_to_write, close_tag]
 
     def to_xml(self, filepath, tab_size=2, self_closing=True):
@@ -192,12 +192,6 @@ class XMLElement:
             )
             if not self.is_root:
                 f.write("\n")
-        # else:
-        #     tags = self.make_xml_tags(tab_size)
-        #     if tags[2]:
-        #         f.write("".join(self.make_xml_tags(tab_size)) + "\n")
-        #     else:
-        #         f.write()
 
     def __str__(self):
         output = ""
@@ -249,7 +243,6 @@ class XMLElement:
     def insert_entity_refs(self, string):
         refs = XMLElement.predef_entities | self.root.entities
         for ref in refs:
-            # ref_len = len(ref) + 2
             no_to_replace = string.count(ref)
             last_index = 0
             for _ in range(no_to_replace):
@@ -274,3 +267,15 @@ class XMLElement:
             attribute_string += f'{key}="{val}" '
         attribute_string = attribute_string[:-1]
         return attribute_string
+
+    @property
+    def dict(self):
+        self_dict = {
+            "attributes": self.attributes,
+            "value": self.value,
+            "children": [child.dict for child in self.children],
+        }
+        return {self.tag: self_dict}
+
+    def json(self, indent=2, sort_keys=False):
+        return dumps(self.dict, indent=indent, sort_keys=sort_keys)

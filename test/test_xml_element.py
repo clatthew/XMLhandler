@@ -4,6 +4,8 @@ from pickle import load
 from src.xml_load import load_xml_from_file
 from test_data.book_store.book_store import build_bookstore_file
 import os
+from json import load as load_json
+from json import dumps
 
 
 @fixture(scope="function")
@@ -547,7 +549,6 @@ class Testto_xml:
         expected_path = "test_data/self_closing/self_closing.xml"
         result_path = "test_data/self_closing/test_xml.xml"
         test_tree = load_xml_from_file(expected_path)
-        print(test_tree)
         test_tree.to_xml(result_path)
         with open(expected_path, "r") as f:
             expected = f.readlines()
@@ -843,3 +844,170 @@ class Testprint_line:
         assert result.index("∟") == 6
         assert result.index("p") == 11
         assert 'number="24" side="left"' in result
+
+
+class Testjson:
+    @mark.it("Returns correct json for a single node with no value or attributes")
+    def test_single_node(self):
+        test_tree = XMLElement("matthew")
+        expected = '{"matthew": {"attributes": {}, "value": null, "children": []}}'
+        result = test_tree.json(indent=None)
+        assert result == expected
+
+    @mark.it("Returns correct json for a single node with value and attributes")
+    def test_single_node_with_val(self):
+        test_tree = XMLElement("matthew", value="maybe", attributes={"green": 44})
+        expected = '{"matthew": {"attributes": {"green": 44}, "value": "maybe", "children": []}}'
+        result = test_tree.json(indent=None)
+        assert result == expected
+
+    @mark.it("Returns correct json for the bookstore.xml file")
+    def test_tree(self):
+        test_data_path = "test_data/book_store/bookstore.xml"
+        expected_path = "test_data/book_store/bookstore.json"
+        test_tree = load_xml_from_file(test_data_path)
+        with open(expected_path, "r") as f:
+            expected = dumps(load_json(f))
+        result = test_tree.json(indent=None, sort_keys=True)
+        assert result == expected
+
+
+class Testdict:
+    @mark.it(("Returns correct dict for a single node with no value or attributes"))
+    def test_single_node(self):
+        test_tree = XMLElement("matthew")
+        expected = {"matthew": {"attributes": {}, "value": None, "children": []}}
+        result = test_tree.dict
+        assert result == expected
+
+    @mark.it("Returns correct dict for a single node with value and attributes")
+    def test_single_node_with_val(self):
+        test_tree = XMLElement("matthew", value="maybe", attributes={"green": 44})
+        expected = {
+            "matthew": {"attributes": {"green": 44}, "value": "maybe", "children": []}
+        }
+        result = test_tree.dict
+        assert result == expected
+
+    @mark.it("Returns correct dict for the bookstore.xml file")
+    def test_tree(self):
+        test_data_path = "test_data/book_store/bookstore.xml"
+        test_tree = load_xml_from_file(test_data_path)
+        expected = {
+            "bookstore": {
+                "attributes": {},
+                "value": None,
+                "children": [
+                    {
+                        "book": {
+                            "attributes": {"category": "cooking"},
+                            "value": None,
+                            "children": [
+                                {
+                                    "title": {
+                                        "attributes": {"lang": "en"},
+                                        "value": "Everyday Italian",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "author": {
+                                        "attributes": {},
+                                        "value": "Giada De Laurentiis",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "year": {
+                                        "attributes": {},
+                                        "value": "2005",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "price": {
+                                        "attributes": {},
+                                        "value": "30",
+                                        "children": [],
+                                    }
+                                },
+                            ],
+                        }
+                    },
+                    {
+                        "book": {
+                            "attributes": {"category": "children"},
+                            "value": None,
+                            "children": [
+                                {
+                                    "title": {
+                                        "attributes": {"lang": "en"},
+                                        "value": "Harry Potter",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "author": {
+                                        "attributes": {},
+                                        "value": "J K. Rowling",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "year": {
+                                        "attributes": {},
+                                        "value": "2005",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "price": {
+                                        "attributes": {},
+                                        "value": "29.99",
+                                        "children": [],
+                                    }
+                                },
+                            ],
+                        }
+                    },
+                    {
+                        "book": {
+                            "attributes": {"category": "web"},
+                            "value": None,
+                            "children": [
+                                {
+                                    "title": {
+                                        "attributes": {"lang": "en"},
+                                        "value": "Learning XML",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "author": {
+                                        "attributes": {},
+                                        "value": "Erik T. Ray",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "year": {
+                                        "attributes": {},
+                                        "value": "2003",
+                                        "children": [],
+                                    }
+                                },
+                                {
+                                    "price": {
+                                        "attributes": {},
+                                        "value": "39.95",
+                                        "children": [],
+                                    }
+                                },
+                            ],
+                        }
+                    },
+                ],
+            }
+        }
+        result = test_tree.dict
+        assert result == expected
