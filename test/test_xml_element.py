@@ -29,65 +29,47 @@ class Test__init__:
     def test_root_element_root(self, root_element):
         assert root_element.root is root_element
 
+
+class Testtag:
+    """
+    Add separate tests for checking attribute key banned chars when changing after tree creation
+    """
+
     @mark.it("Raises ValueError if using & in tag_name")
     def test_ampersand_in_tag_name(self, root_element):
         with raises(ValueError) as err:
             root_element.make_child("Matt&Kim")
-        assert str(err.value) == "Tag name may not contain &"
+        assert str(err.value) == 'Tag name may not contain "&"'
 
     @mark.it("Raises ValueError if using ' in tag_name")
     def test_apos_in_tag_name(self, root_element):
         with raises(ValueError) as err:
             root_element.make_child("Matt'Kim")
-        assert str(err.value) == "Tag name may not contain '"
+        assert str(err.value) == 'Tag name may not contain "\'"'
 
     @mark.it('Raises ValueError if using " in tag_name')
     def test_quote_in_tag_name(self, root_element):
         with raises(ValueError) as err:
             root_element.make_child('Matt"Kim')
-        assert str(err.value) == 'Tag name may not contain "'
+        assert str(err.value) == 'Tag name may not contain """'
 
     @mark.it("Raises ValueError if using < in tag_name")
     def test_lt_in_tag_name(self, root_element):
         with raises(ValueError) as err:
             root_element.make_child("Matt<Kim")
-        assert str(err.value) == "Tag name may not contain <"
+        assert str(err.value) == 'Tag name may not contain "<"'
 
     @mark.it("Raises ValueError if using > in tag_name")
     def test_gt_in_tag_name(self, root_element):
         with raises(ValueError) as err:
             root_element.make_child("Matt>Kim")
-        assert str(err.value) == "Tag name may not contain >"
+        assert str(err.value) == 'Tag name may not contain ">"'
 
-    @mark.it("Raises ValueError if using & in an attribute key")
-    def test_ampersand_in_attr_key(self, root_element):
+    @mark.it("Raises ValueError if using space in tag_name")
+    def test_space_in_tag_name(self, root_element):
         with raises(ValueError) as err:
-            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt&Kim": "yes"})
-        assert str(err.value) == "Attribute key may not contain &"
-
-    @mark.it("Raises ValueError if using ' in an attribute key")
-    def test_apos_in_attr_key(self, root_element):
-        with raises(ValueError) as err:
-            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt'Kim": "yes"})
-        assert str(err.value) == "Attribute key may not contain '"
-
-    @mark.it('Raises ValueError if using " in an attribute key')
-    def test_quote_in_attr_key(self, root_element):
-        with raises(ValueError) as err:
-            root_element.make_child("Matthew", {"Matt and Kim": 0, 'Matt"Kim': "yes"})
-        assert str(err.value) == 'Attribute key may not contain "'
-
-    @mark.it("Raises ValueError if using < in an attribute key")
-    def test_lt_in_attr_key(self, root_element):
-        with raises(ValueError) as err:
-            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt<Kim": "yes"})
-        assert str(err.value) == "Attribute key may not contain <"
-
-    @mark.it("Raises ValueError if using > in an attribute key")
-    def test_gt_in_attr_key(self, root_element):
-        with raises(ValueError) as err:
-            root_element.make_child("Matthew", {"Matt and Kim": 0, "Matt>Kim": "yes"})
-        assert str(err.value) == "Attribute key may not contain >"
+            root_element.make_child("Matt Kim")
+        assert str(err.value) == 'Tag name may not contain " "'
 
 
 class Testadd_child:
@@ -516,12 +498,11 @@ class Testto_xml:
         os.remove(result_path)
         assert result == expected
 
-    @mark.xfail
     @mark.it('Writes xml version="1.0" when xml_version not set')
     def test_default_version(self):
         expected_path = "test_data/weird_metadata/default_xml_version.xml"
         result_path = "test_data/weird_metadata/test_xml.xml"
-        test_tree = XMLElement("matthew", encoding="happy birthDa9y")
+        test_tree = XMLElement("matthew", encoding="ascii")
         test_tree.to_xml(result_path)
         with open(expected_path, "r") as f:
             result = f.readlines()
@@ -530,14 +511,11 @@ class Testto_xml:
         os.remove(result_path)
         assert result == expected
 
-    @mark.xfail
     @mark.it("Correctly writes custom metadata to a file")
     def test_write_custom_metadata(self):
-        expected_path = "test_data/weird_metadata/weird_metadata.xml"
+        expected_path = "test_data/weird_metadata/weird_but_valid.xml"
         result_path = "test_data/weird_metadata/test_xml.xml"
-        test_tree = XMLElement(
-            "matthew", encoding="happy birthDa9y", xml_version="22.5"
-        )
+        test_tree = XMLElement("matthew", encoding="cp1006", xml_version="22.5")
         test_tree.to_xml(result_path)
         with open(expected_path, "r") as f:
             result = f.readlines()
@@ -581,6 +559,10 @@ class Testto_xml:
 
 
 class Testadd_attribute:
+    """
+    Add separate tests for checking attribute key banned chars when adding attribute after tree creation
+    """
+
     @mark.it("Add first attribute")
     def test_first(self, root_element):
         root_element.add_attribute({"name": "Waterstones"})
@@ -608,6 +590,42 @@ class Testadd_attribute:
         with raises(TypeError) as err:
             root_element.add_attribute(["hello"])
         assert str(err.value) == "Attribute must be of type dict"
+
+    @mark.it("Raises ValueError if using & in an attribute key")
+    def test_ampersand_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matthew", {"MattAndKim": 0, "Matt&Kim": "yes"})
+        assert str(err.value) == 'Attribute key may not contain "&"'
+
+    @mark.it("Raises ValueError if using ' in an attribute key")
+    def test_apos_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matthew", {"MattAndKim": 0, "Matt'Kim": "yes"})
+        assert str(err.value) == 'Attribute key may not contain "\'"'
+
+    @mark.it('Raises ValueError if using " in an attribute key')
+    def test_quote_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matthew", {"MattAndKim": 0, 'Matt"Kim': "yes"})
+        assert str(err.value) == 'Attribute key may not contain """'
+
+    @mark.it("Raises ValueError if using < in an attribute key")
+    def test_lt_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matthew", {"MattAndKim": 0, "Matt<Kim": "yes"})
+        assert str(err.value) == 'Attribute key may not contain "<"'
+
+    @mark.it("Raises ValueError if using > in an attribute key")
+    def test_gt_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matthew", {"MattAndKim": 0, "Matt>Kim": "yes"})
+        assert str(err.value) == 'Attribute key may not contain ">"'
+
+    @mark.it("Raises ValueError if using space in attribute key")
+    def test_space_in_attr_key(self, root_element):
+        with raises(ValueError) as err:
+            root_element.make_child("Matthew", attributes={"Matt and Kim": "Daylight"})
+        assert str(err.value) == 'Attribute key may not contain " "'
 
 
 class Testadd_entity:

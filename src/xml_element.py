@@ -8,9 +8,6 @@ class XMLElement:
     def __init__(
         self, tag: str, attributes=None, value=None, encoding=None, xml_version=None
     ):
-        for ref in XMLElement.predef_entities:
-            if ref in tag:
-                raise ValueError(f"Tag name may not contain {ref}")
         self.tag = tag
         self.__attributes = {}
         self.__value = value
@@ -18,10 +15,6 @@ class XMLElement:
         self.parent = None
         self.root = self
         if attributes:
-            for key in attributes:
-                for ref in XMLElement.predef_entities:
-                    if ref in str(key):
-                        raise ValueError(f"Attribute key may not contain {ref}")
             self.add_attribute(attributes)
         self.__entities = {}
         self.encoding = encoding
@@ -33,17 +26,9 @@ class XMLElement:
 
     @tag.setter
     def tag(self, new_val):
-        banned_chars = [
-            '"',
-            " ",
-            "&",
-            ";",
-            "<",
-            ">",
-        ]
-        for char in banned_chars:
-            if char in new_val:
-                raise ValueError(f'XML tag cannot contain "{char}"')
+        for ref in list(XMLElement.predef_entities) + [" "]:
+            if ref in new_val:
+                raise ValueError(f'Tag name may not contain "{ref}"')
         self.__tag = new_val
 
     @property
@@ -63,6 +48,10 @@ class XMLElement:
             raise TypeError("Cannot add entity to non-root element")
 
     def add_attribute(self, new_attribute: dict):
+        for ref in list(XMLElement.predef_entities) + [" "]:
+            for key in new_attribute:
+                if ref in str(key):
+                    raise ValueError(f'Attribute key may not contain "{ref}"')
         try:
             self.__attributes |= new_attribute
         except:
