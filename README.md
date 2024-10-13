@@ -7,6 +7,7 @@
 - tags with multiple attributes ✅
 - disallow characters from tag name and attribute name ✅
 - allow user to set xml_version and encoding ✅
+- verify that an added tag, attribute and value names ans contents will be valid
 
 ### json ✅
 - convert object tree structure to python dict ✅
