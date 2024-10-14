@@ -285,6 +285,8 @@ class Testget_next_line:
             assert get_next_line(f) == "    <author>Giada De Laurentiis</author>\n"
             assert get_next_line(f) == "    <year>2005</year>\n"
 
+        # distinguishes comments from lines containing comment syntax elsewhere
+
     @mark.it("Ignores commented lines")
     def test_comment(self):
         with open("test_data/comments/comments.xml") as f:
