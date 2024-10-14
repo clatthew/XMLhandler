@@ -564,7 +564,7 @@ class Testto_xml:
         "Raises UnicodeEncodeError when encoding character which isn't supported by the encoding type"
     )
     def test_unsupported_char(self):
-        file_path = "test_data/bad_char_set/bad_char_set.xml"
+        file_path = "test_data/bad_char_set.xml"
         test_tree = XMLElement("Mätthëw", encoding="ascii")
         with raises(UnicodeEncodeError):
             test_tree.to_xml(file_path)
