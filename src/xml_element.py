@@ -23,15 +23,11 @@ class XMLElement:
     def tag(self):
         return self.__tag
 
+
     @tag.setter
     def tag(self, new_val):
-        for ref in list(XMLElement.predef_entities) + [" "]:
-            if ref in new_val:
-                raise ValueError(f'Tag name may not contain "{ref}"')
-        if new_val[0].isalpha() or new_val[0] == "_":
-            self.__tag = new_val
-        else:
-            raise ValueError('Tag name must begin with letter or underscore')
+        is_valid_name(new_val, 'tag name')
+        self.__tag = new_val
 
     @property
     def entities(self):
@@ -50,10 +46,8 @@ class XMLElement:
             raise TypeError("Cannot add entity to non-root element")
 
     def add_attribute(self, new_attribute: dict):
-        for ref in list(XMLElement.predef_entities) + [" "]:
-            for key in new_attribute:
-                if ref in str(key):
-                    raise ValueError(f'Attribute key may not contain "{ref}"')
+        for key in new_attribute:
+            is_valid_name(key, 'attribute key')
         try:
             self.__attributes |= new_attribute
         except:
@@ -281,3 +275,21 @@ class XMLElement:
 
     def json(self, indent=2, sort_keys=False):
         return dumps(self.dict, indent=indent, sort_keys=sort_keys)
+
+
+def is_valid_name(new_name, name_type):  
+    for ref in list(XMLElement.predef_entities) + [" "]:
+        try:
+            assert ref not in new_name
+        except:
+            raise ValueError(f'{name_type.capitalize()} may not contain "{ref}"')
+    
+    try:
+        assert new_name[0].isalpha() or new_name[0] == "_"
+    except:
+        raise ValueError(f"{name_type.capitalize()} must begin with letter or underscore")
+    
+    try:
+        assert new_name[0:3].lower() != "xml"
+    except:
+        raise ValueError(f'{name_type.capitalize()} cannot start with "xml"')
