@@ -76,7 +76,7 @@ class XMLElement:
 
     @property
     def path(self):
-        if self.root is self:
+        if self.is_root:
             return []
         else:
             return self.parent.path + [self.parent.children.index(self)]
