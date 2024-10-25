@@ -23,10 +23,9 @@ class XMLElement:
     def tag(self):
         return self.__tag
 
-
     @tag.setter
     def tag(self, new_val):
-        is_valid_name(new_val, 'tag name')
+        is_valid_name(new_val, "tag name")
         self.__tag = new_val
 
     @property
@@ -47,7 +46,7 @@ class XMLElement:
 
     def add_attribute(self, new_attribute: dict):
         for key in new_attribute:
-            is_valid_name(key, 'attribute key')
+            is_valid_name(key, "attribute key")
         try:
             self.__attributes |= new_attribute
         except:
@@ -277,18 +276,20 @@ class XMLElement:
         return dumps(self.dict, indent=indent, sort_keys=sort_keys)
 
 
-def is_valid_name(new_name, name_type):  
+def is_valid_name(new_name, name_type):
     for ref in list(XMLElement.predef_entities) + [" "]:
         try:
             assert ref not in new_name
         except:
             raise ValueError(f'{name_type.capitalize()} may not contain "{ref}"')
-    
+
     try:
         assert new_name[0].isalpha() or new_name[0] == "_"
     except:
-        raise ValueError(f"{name_type.capitalize()} must begin with letter or underscore")
-    
+        raise ValueError(
+            f"{name_type.capitalize()} must begin with letter or underscore"
+        )
+
     try:
         assert new_name[0:3].lower() != "xml"
     except:
