@@ -1,42 +1,42 @@
 from src.xml_element import XMLElement
+from re import compile
 
 
 def get_element_from_line(line, entities={}):
-    stop_tag = False
-    for i in range(len(line)):
-        if line[i] != " ":
-            break
-    if line[i : i + 2] == "</":
-        stop_tag = True
-    tag_inner_start = line.index("<") + 1 + stop_tag
-    tag_inner_stop = line.index(">")
-    tag_inner = line[tag_inner_start:tag_inner_stop]
-    if not stop_tag and "/" in tag_inner:
-        tag_inner = tag_inner[:-1]
-    tag_name = tag_inner.split()[0]
+    non_marker_chars = "[^</>= ]*"
+    value_chars = "[^</>=]*"
+    start_pattern = rf'<(?P<tag_name>{non_marker_chars}) ?(?P<attributes>({non_marker_chars}="{non_marker_chars}" ?)*)>$'
+    self_closing_pattern = rf"{start_pattern[:-2]}/>$"
+    stop_pattern = rf"</{non_marker_chars}>$"
+    generic_pattern = rf"{start_pattern[:-2]}/?>(?P<value>{value_chars})?(</\1>)?$"
 
-    attributes = None
-    if "=" in tag_inner:
-        attribute_list = tag_inner.split()[1:]
+    if compile(stop_pattern).match(line):
+        return None
+
+    tag_name = compile(generic_pattern).match(line).group("tag_name")
+
+    attributes_string = compile(generic_pattern).match(line).group("attributes")
+    if attributes_string:
+        attribute_list = attributes_string.split(" ")
+        attribute_pattern = compile(r'([^"=]*)="([^"=]*)"')
         attributes = {}
-        for attr in attribute_list:
-            attr_list = attr.split("=")
-            attr_key = attr_list[0]
-            attr_val = remove_refs(attr_list[1][1:-1], entities)
-            attributes[attr_key] = attr_val
+        for attribute_pair in attribute_list:
+            key = attribute_pattern.match(attribute_pair).group(1)
+            val = attribute_pattern.match(attribute_pair).group(2)
+            val = remove_refs(val, entities)
+            attributes[key] = val
+    else:
+        attributes = None
 
-    value = None
-    if line.count("<") == 2:
-        value_start = line.index(">") + 1
-        value_end = line.index("<", tag_inner_start + 1)
-        value = line[value_start:value_end]
-        value = remove_refs(value, entities)
+    if compile(start_pattern).match(line):
+        return XMLElement(tag_name, attributes)
 
-    if line[tag_inner_stop - 1 : tag_inner_stop + 1] == "/>":
-        value = ""
+    if compile(self_closing_pattern).match(line):
+        return XMLElement(tag_name, attributes, value="")
 
-    if not stop_tag:
-        return XMLElement(tag_name, attributes, value)
+    value = compile(generic_pattern).match(line).group("value")
+    value = remove_refs(value)
+    return XMLElement(tag_name, attributes, value=value)
 
 
 def remove_refs(line, def_refs={}):
@@ -93,13 +93,13 @@ def load_xml_from_file(filepath):
             entities = extract_entities(doc_info)
             line = get_next_line(f)
 
-        root_element = get_element_from_line(line, entities)
+        root_element = get_element_from_line(line.strip(), entities)
         root_element.xml_version = metadata["xml version"]
         root_element.encoding = metadata["encoding"]
         current_parent = root_element
         root_element.add_entity(entities)
         for line in f:
-            element = get_element_from_line(line, entities)
+            element = get_element_from_line(line.strip(), entities)
             if element:
                 try:
                     current_parent.add_child(element)
