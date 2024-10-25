@@ -292,4 +292,4 @@ def is_valid_name(new_name, name_type):
     try:
         assert new_name[0:3].lower() != "xml"
     except:
-        raise ValueError(f'{name_type.capitalize()} cannot start with "xml"')
+        raise ValueError(f'{name_type.capitalize()} may not begin with "xml"')

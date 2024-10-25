@@ -82,6 +82,13 @@ class Testtag:
         test_tree = XMLElement(tag_name)
         assert test_tree.tag == tag_name
 
+    @mark.it("Raises ValueError if tag name begins with \"xml\" with an underscore")
+    def test_underscore_start(self):
+        tag_name = "xmlatthew"
+        with raises(ValueError) as err:
+            test_tree = XMLElement(tag_name)
+        assert str(err.value) == 'Tag name may not begin with "xml"'
+
     # does the same apply to attribute keys?
 
 
