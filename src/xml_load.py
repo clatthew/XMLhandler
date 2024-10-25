@@ -101,10 +101,7 @@ def load_xml_from_file(filepath):
         for line in f:
             element = get_element_from_line(line.strip(), entities)
             if element:
-                try:
-                    current_parent.add_child(element)
-                except:
-                    current_parent.add_child(element)
+                current_parent.add_child(element)
                 if element.value is None:
                     current_parent = element
             else:
