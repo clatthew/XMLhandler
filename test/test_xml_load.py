@@ -309,7 +309,7 @@ class Testget_next_line:
         assert next(f) == "<bookstore>"
         assert next(f) == '<book category="cooking">'
         assert next(f) == '<title lang="en">Everyday Italian</title>'
-        assert next(f) == '</book>'
+        assert next(f) == "</book>"
 
     @mark.it("Preserves non-commented data on lines where a comment ends")
     def test_begin_line_comments(self):
@@ -318,6 +318,7 @@ class Testget_next_line:
             next(f)
         assert next(f) == '<book category="web">'
         assert next(f) == '<title lang="en">Learning XML</title>'
+
 
 class Teststarts_a_new_comment:
     @mark.it("Returns False, None if no open-comment syntax in line")
@@ -334,12 +335,15 @@ class Teststarts_a_new_comment:
         result = starts_a_new_comment(test_line)
         assert result == expected
 
-    @mark.it("Returns True with line before comment if usable line appears before the comment begins")
+    @mark.it(
+        "Returns True with line before comment if usable line appears before the comment begins"
+    )
     def test_3(self):
         test_line = '<book category="children"><!--'
         expected = (True, '<book category="children">')
         result = starts_a_new_comment(test_line)
         assert result == expected
+
 
 class Testends_a_comment:
     @mark.it("Returns False, None if no end-comment syntax in line")
@@ -356,7 +360,9 @@ class Testends_a_comment:
         result = ends_a_comment(test_line)
         assert result == expected
 
-    @mark.it("Returns True with line after comment if usable line appears after the comment ends")
+    @mark.it(
+        "Returns True with line after comment if usable line appears after the comment ends"
+    )
     def test_3(self):
         test_line = '--><book category="children">'
         expected = (True, '<book category="children">')
