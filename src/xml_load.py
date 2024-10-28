@@ -1,8 +1,9 @@
 from src.xml_element import XMLElement
 from re import compile
+from typing import TextIO
 
 
-def get_element_from_line(line, entities={}):
+def get_element_from_line(line: str, entities: dict = {}):
     non_marker_chars = "[^</>= ]*"
     value_chars = "[^</>=]*"
     start_pattern = rf'<(?P<tag_name>{non_marker_chars}) ?(?P<attributes>({non_marker_chars}="{non_marker_chars}" ?)*)>$'
@@ -39,7 +40,7 @@ def get_element_from_line(line, entities={}):
     return XMLElement(tag_name, attributes, value=value)
 
 
-def remove_refs(line, def_refs={}):
+def remove_refs(line: str, def_refs: dict = {}):
     predef_refs = {"lt": "<", "gt": ">", "apos": "'", "quot": '"', "amp": "&"}
     refs = def_refs | predef_refs
     for ref in refs:
@@ -51,7 +52,7 @@ def remove_refs(line, def_refs={}):
     return line
 
 
-def extract_entities(doc_info):
+def extract_entities(doc_info: str):
     entity_list = [i for i in doc_info.split("<!") if i[0:6].upper() == "ENTITY"]
     entities = {}
     for element in entity_list:
@@ -64,7 +65,7 @@ def extract_entities(doc_info):
     return entities
 
 
-def extract_metadata(preamble):
+def extract_metadata(preamble: str):
     metadata = {}
     for key in ["xml version", "encoding"]:
         key_start = preamble.lower().index(key)
@@ -74,14 +75,14 @@ def extract_metadata(preamble):
     return metadata
 
 
-def get_next_line(f):
+def get_next_line(f: TextIO):
     next_line = f.readline()
     while "<!--" in next_line:
         next_line = f.readline()
     return next_line
 
 
-def load_xml_from_file(filepath):
+def load_xml_from_file(filepath: str):
     with open(filepath, "r") as f:
         metadata = extract_metadata(f.readline())
         line = get_next_line(f)

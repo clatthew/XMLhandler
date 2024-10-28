@@ -1,11 +1,17 @@
 from json import dumps
+from typing import Any, Self, TextIO, Literal
 
 
 class XMLElement:
     predef_entities = {"&": "amp", "<": "lt", ">": "gt", "'": "apos", '"': "quot"}
 
     def __init__(
-        self, tag: str, attributes=None, value=None, encoding=None, xml_version=None
+        self,
+        tag: str,
+        attributes: dict = None,
+        value: str = None,
+        encoding: str = None,
+        xml_version: str = None,
     ):
         self.tag = tag
         self.__attributes = {}
@@ -24,7 +30,7 @@ class XMLElement:
         return self.__tag
 
     @tag.setter
-    def tag(self, new_val):
+    def tag(self, new_val: str):
         is_valid_name(new_val, "tag name")
         self.__tag = new_val
 
@@ -52,10 +58,10 @@ class XMLElement:
         except:
             raise TypeError("Attribute must be of type dict")
 
-    def remove_attribute(self, key):
+    def remove_attribute(self, key: str):
         del self.__attributes[key]
 
-    def remove_entity(self, key):
+    def remove_entity(self, key: str):
         del self.__entities[key]
 
     @property
@@ -67,7 +73,7 @@ class XMLElement:
         return self.__value
 
     @value.setter
-    def value(self, new_val):
+    def value(self, new_val: Any):
         if self.children:
             raise ValueError("Cannot add value to an element with children")
         else:
@@ -80,7 +86,7 @@ class XMLElement:
         else:
             return self.parent.path + [self.parent.children.index(self)]
 
-    def add_child(self, new_child):
+    def add_child(self, new_child: Self):
         if new_child in self.descendants:
             raise ValueError("cannot add descendant as child")
         if self.value:
@@ -95,14 +101,14 @@ class XMLElement:
                 self.add_entity(xmlelt.entities)
             xmlelt.metadata = None
 
-    def make_child(self, tag: str, attributes=None, value=None):
+    def make_child(self, tag: str, attributes: dict = None, value: str = None):
         new_child = XMLElement(tag, attributes, value)
         self.add_child(new_child)
 
     def add_sibling(self, new_sibling):
         self.parent.add_child(new_sibling)
 
-    def make_sibling(self, tag=None, attributes=None, value=None):
+    def make_sibling(self, tag=None, attributes: dict = None, value: str = None):
         if not tag:
             tag = self.tag
         new_sibling = XMLElement(tag, attributes, value)
@@ -152,7 +158,7 @@ class XMLElement:
             val_to_write = self.insert_entity_refs(str(self.__value))
         return [offset, open_tag, val_to_write, close_tag]
 
-    def to_xml(self, filepath, tab_size=2, self_closing=True):
+    def to_xml(self, filepath: str, tab_size: int = 2, self_closing: bool = True):
         if self.xml_version:
             xml_version = self.xml_version
         else:
@@ -170,7 +176,7 @@ class XMLElement:
                 f.write("]>\n")
             self.write_xml_body(f, tab_size, self_closing)
 
-    def write_xml_body(self, f, tab_size, self_closing):
+    def write_xml_body(self, f: TextIO, tab_size: int, self_closing: bool):
         if self.is_leaf:
             f.write("".join(self.make_xml_tags(tab_size, self_closing)) + "\n")
         else:
@@ -219,7 +225,7 @@ class XMLElement:
     def __iter__(self):
         yield from self.descendants
 
-    def get_from_path(self, path):
+    def get_from_path(self, path: str):
         try:
             if path:
                 return self.children[path[0]].get_from_path(path[1:])
@@ -228,14 +234,14 @@ class XMLElement:
         except:
             raise IndexError(f"no element found at path {path}")
 
-    def remove_from_path(self, path):
+    def remove_from_path(self, path: str):
         to_remove = self.get_from_path(path)
         if to_remove.is_root:
             raise IndexError("cannot remove root element")
         parent = self.get_from_path(path[:-1])
         parent.children.remove(to_remove)
 
-    def insert_entity_refs(self, string):
+    def insert_entity_refs(self, string: str):
         refs = XMLElement.predef_entities | self.root.entities
         for ref in refs:
             no_to_replace = string.count(ref)
@@ -272,25 +278,27 @@ class XMLElement:
         }
         return {self.tag: self_dict}
 
-    def json(self, indent=2, sort_keys=False):
+    def json(self, indent: int = 2, sort_keys: bool = False):
         return dumps(self.dict, indent=indent, sort_keys=sort_keys)
 
 
-def is_valid_name(new_name, name_type):
+def is_valid_name(
+    new_name_candidate: str, name_type: Literal["tag name", "attribute key"]
+):
     for ref in list(XMLElement.predef_entities) + [" "]:
         try:
-            assert ref not in new_name
+            assert ref not in new_name_candidate
         except:
             raise ValueError(f'{name_type.capitalize()} may not contain "{ref}"')
 
     try:
-        assert new_name[0].isalpha() or new_name[0] == "_"
+        assert new_name_candidate[0].isalpha() or new_name_candidate[0] == "_"
     except:
         raise ValueError(
             f"{name_type.capitalize()} must begin with letter or underscore"
         )
 
     try:
-        assert new_name[0:3].lower() != "xml"
+        assert new_name_candidate[0:3].lower() != "xml"
     except:
         raise ValueError(f'{name_type.capitalize()} may not begin with "xml"')
