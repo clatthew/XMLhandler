@@ -4,12 +4,12 @@ from typing import TextIO
 
 
 def get_element_from_line(line: str, entities: dict = {}):
-    non_marker_chars = "[^</>= ]*"
+    non_marker_chars = "[^</>=\" ]*"
     value_chars = "[^</>=]*"
     start_pattern = rf'<(?P<tag_name>{non_marker_chars}) ?(?P<attributes>({non_marker_chars}="{non_marker_chars}" ?)*)>$'
     self_closing_pattern = rf"{start_pattern[:-2]}/>$"
     stop_pattern = rf"</{non_marker_chars}>$"
-    generic_pattern = rf"{start_pattern[:-2]}/?>(?P<value>{value_chars})?(</\1>)?$"
+    generic_pattern = rf"{start_pattern[:-2]}/?>(?P<value>{value_chars})?(</(?P=tag_name)>)?$"
 
     if compile(stop_pattern).match(line):
         return None
@@ -19,7 +19,7 @@ def get_element_from_line(line: str, entities: dict = {}):
     attributes_string = compile(generic_pattern).match(line).group("attributes")
     if attributes_string:
         attribute_list = attributes_string.split(" ")
-        attribute_pattern = compile(r'([^"=]*)="([^"=]*)"')
+        attribute_pattern = compile(rf'({non_marker_chars})="({non_marker_chars})"')
         attributes = {}
         for attribute_pair in attribute_list:
             key = attribute_pattern.match(attribute_pair).group(1)
