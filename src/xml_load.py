@@ -10,9 +10,6 @@ def get_element_from_line(line: str, entities: dict = {}):
     self_closing_pattern = rf"{start_pattern[:-2]}/>$"
     stop_pattern = rf"</{non_marker_chars}>$"
     generic_pattern = rf"{start_pattern[:-2]}/?>(?P<value>{value_chars})?(</\1>)?$"
-    # print(generic_pattern)
-    print(line + "endofline")
-    # print(compile(generic_pattern).match(line).group("tag_name"))
 
     if compile(stop_pattern).match(line):
         return None
