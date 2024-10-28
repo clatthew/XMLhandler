@@ -277,22 +277,88 @@ class Testextract_metadata:
 class Testget_next_line:
     @mark.it("Generates non-comment lines")
     def test_non_comment(self):
-        with open("test_data/book_store/bookstore.xml") as f:
-            assert get_next_line(f) == '<?xml version="1.0" encoding="UTF-8"?>\n'
-            assert get_next_line(f) == "<bookstore>\n"
-            assert get_next_line(f) == '  <book category="cooking">\n'
-            assert get_next_line(f) == '    <title lang="en">Everyday Italian</title>\n'
-            assert get_next_line(f) == "    <author>Giada De Laurentiis</author>\n"
-            assert get_next_line(f) == "    <year>2005</year>\n"
+        f = generate_noncomment_lines("test_data/book_store/bookstore.xml")
+        assert next(f) == '<?xml version="1.0" encoding="UTF-8"?>'
+        assert next(f) == "<bookstore>"
+        assert next(f) == '<book category="cooking">'
+        assert next(f) == '<title lang="en">Everyday Italian</title>'
+        assert next(f) == "<author>Giada De Laurentiis</author>"
+        assert next(f) == "<year>2005</year>"
 
-        # distinguishes comments from lines containing comment syntax elsewhere
-
-    @mark.it("Ignores commented lines")
+    @mark.it("Ignores commented lines, including consecutive commented lines")
     def test_comment(self):
-        with open("test_data/comments/comments.xml") as f:
-            assert get_next_line(f) == '<?xml version="1.0" encoding="UTF-8"?>\n'
-            assert get_next_line(f) == "<bookstore>\n"
-            assert get_next_line(f) == '  <book category="cooking">\n'
-            assert get_next_line(f) == '    <title lang="en">Everyday Italian</title>\n'
-            assert get_next_line(f) == "    <author>Giada De Laurentiis</author>\n"
-            assert get_next_line(f) == "    <year>2005</year>\n"
+        f = generate_noncomment_lines("test_data/comments/comments.xml")
+        assert next(f) == '<?xml version="1.0" encoding="UTF-8"?>'
+        assert next(f) == "<bookstore>"
+        assert next(f) == '<book category="cooking">'
+        assert next(f) == '<title lang="en">Everyday Italian</title>'
+        assert next(f) == "<author>Giada De Laurentiis</author>"
+        assert next(f) == "<year>2005</year>"
+
+    @mark.it("Ignores multi-line comments")
+    def test_multiline_comment(self):
+        f = generate_noncomment_lines("test_data/comments/minus_a_book.xml")
+        assert next(f) == '<?xml version="1.0" encoding="UTF-8"?>'
+        assert next(f) == "<bookstore>"
+        assert next(f) == '<book category="children">'
+
+    @mark.it("Preserves non-commented data on lines where a comment begins")
+    def test_end_line_comments(self):
+        f = generate_noncomment_lines("test_data/comments/end_of_line_comment.xml")
+        assert next(f) == '<?xml version="1.0" encoding="UTF-8"?>'
+        assert next(f) == "<bookstore>"
+        assert next(f) == '<book category="cooking">'
+        assert next(f) == '<title lang="en">Everyday Italian</title>'
+        assert next(f) == '</book>'
+
+    @mark.it("Preserves non-commented data on lines where a comment ends")
+    def test_begin_line_comments(self):
+        f = generate_noncomment_lines("test_data/comments/end_of_line_comment.xml")
+        for _ in range(5):
+            next(f)
+        assert next(f) == '<book category="web">'
+        assert next(f) == '<title lang="en">Learning XML</title>'
+
+class Teststarts_a_new_comment:
+    @mark.it("Returns False, None if no open-comment syntax in line")
+    def test_1(self):
+        test_line = '<book category="children">'
+        expected = (False, None)
+        result = starts_a_new_comment(test_line)
+        assert result == expected
+
+    @mark.it("Returns True, None if entire line is a comment")
+    def test_2(self):
+        test_line = '<!--<book category="children">-->'
+        expected = (True, None)
+        result = starts_a_new_comment(test_line)
+        assert result == expected
+
+    @mark.it("Returns True with line before comment if usable line appears before the comment begins")
+    def test_3(self):
+        test_line = '<book category="children"><!--'
+        expected = (True, '<book category="children">')
+        result = starts_a_new_comment(test_line)
+        assert result == expected
+
+class Testends_a_comment:
+    @mark.it("Returns False, None if no end-comment syntax in line")
+    def test_1(self):
+        test_line = '<book category="children">'
+        expected = (False, None)
+        result = ends_a_comment(test_line)
+        assert result == expected
+
+    @mark.it("Returns True, None if entire line is a comment")
+    def test_2(self):
+        test_line = '<!--<book category="children">-->'
+        expected = (True, None)
+        result = ends_a_comment(test_line)
+        assert result == expected
+
+    @mark.it("Returns True with line after comment if usable line appears after the comment ends")
+    def test_3(self):
+        test_line = '--><book category="children">'
+        expected = (True, '<book category="children">')
+        result = ends_a_comment(test_line)
+        assert result == expected
