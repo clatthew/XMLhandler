@@ -1,6 +1,5 @@
 from src.xml_element import XMLElement
 from re import compile
-from typing import TextIO
 
 
 def get_element_from_line(line: str, entities: dict = {}):
