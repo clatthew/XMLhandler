@@ -125,17 +125,29 @@ def test_load_xml_custom_entity_refs():
     test_tree = load_xml_from_file("test_data/def_entity_refs/def_entity_refs.xml")
     assert test_tree.entities == {"Waterstones": "company", "l": "j"}
 
-@mark.it("Raises TypeError when attempting to load from file which doesn't contain an XML tree structure")
-def test_load_faulty_file():
-    with raises (TypeError) as err:
-        load_xml_from_file("test_data/not_xml/not_xml.sc")
-    assert str(err.value) == 'No parsable XML tree found at test_data/not_xml/not_xml.sc.'
 
-@mark.it("Raises TypeError when trying to load from file which contains correct first line but doesn't contain an XML tree structure")
+@mark.it(
+    "Raises TypeError when attempting to load from file which doesn't contain an XML tree structure"
+)
+def test_load_faulty_file():
+    with raises(TypeError) as err:
+        load_xml_from_file("test_data/not_xml/not_xml.sc")
+    assert (
+        str(err.value) == "No parsable XML tree found at test_data/not_xml/not_xml.sc."
+    )
+
+
+@mark.it(
+    "Raises TypeError when trying to load from file which contains correct first line but doesn't contain an XML tree structure"
+)
 def test_load_faulty_file_2():
-    with raises (TypeError) as err:
+    with raises(TypeError) as err:
         load_xml_from_file("test_data/not_xml/also_not_xml.sc")
-    assert str(err.value) == 'No parsable XML tree found at test_data/not_xml/also_not_xml.sc.'
+    assert (
+        str(err.value)
+        == "No parsable XML tree found at test_data/not_xml/also_not_xml.sc."
+    )
+
 
 class Testremove_refs:
     @mark.it('Removes single instance of "&lt;" and replaces it with "<"')
