@@ -166,6 +166,15 @@ def generate_noncomment_lines(filepath: str):
 
 
 def load_xml_from_file(filepath: str):
+    try:
+        return load_from(filepath)
+    except ValueError:
+        raise TypeError(f'No parsable XML tree found at {filepath}.')
+    except AttributeError:
+        raise TypeError(f'No parsable XML tree found at {filepath}.')
+        
+
+def load_from(filepath: str):
     """Return an XMLElement object containing information described in the XML file at the filepath given.
     
     Arguments:
@@ -173,6 +182,7 @@ def load_xml_from_file(filepath: str):
 
     f = generate_noncomment_lines(filepath)
     metadata = extract_metadata(next(f))
+
     line = next(f)
     entities = {}
 
@@ -184,8 +194,6 @@ def load_xml_from_file(filepath: str):
         line = next(f)
 
     root_element = get_element_from_line(line.strip(), entities)
-    if not isinstance(root_element, XMLElement):
-        raise TypeError(f'No parsable XML tree found at {filepath}.')
     root_element.xml_version = metadata["xml version"]
     root_element.encoding = metadata["encoding"]
     current_parent = root_element
