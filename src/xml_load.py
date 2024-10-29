@@ -6,7 +6,7 @@ def get_element_from_line(line: str, entities: dict = {}) -> XMLElement | None:
     """Create an XMLElement object from a line of an XML file.
 
     Extract the ``tag_name``, ``attributes`` and ``value`` of the XML element contained in line, if line contains a start tag. If line contains only a stop tag, return ``None``.
-    
+
     Arguments:
     ``line`` -- an arbitrary string containing XML syntax.
     ``entities`` -- a dictionary containing user-defined entity references which will be replaced when building the XMLElement.

@@ -256,7 +256,7 @@ class XMLElement:
 
     def write_xml_body(self, f: TextIO, tab_size: int, self_closing: bool):
         """Write the descendants of the XMLElement object to the writable object ``f``.
-        
+
         Arguments:
         ``f`` -- a writable file object.
         ``tab_size`` -- the number of spaces used for each level of indentation (defaults to 2).
