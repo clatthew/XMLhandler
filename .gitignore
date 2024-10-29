@@ -8,3 +8,4 @@ sandbox.ipynb
 .metals
 .scala-build
 .DS_Store
+.coverage
