@@ -5,3 +5,6 @@ venv/
 .ruff_cache/
 sandbox.py
 sandbox.ipynb
+.metals
+.scala-build
+.DS_Store
