@@ -5,10 +5,11 @@ from re import compile
 def get_element_from_line(line: str, entities: dict = {}) -> XMLElement | None:
     """Create an XMLElement object from a line of an XML file.
 
-    Extract the tag_name, attributes and value of the XML element contained in line, if line contains a start tag. If line contains only a stop tag, return None.
+    Extract the ``tag_name``, ``attributes`` and ``value`` of the XML element contained in line, if line contains a start tag. If line contains only a stop tag, return ``None``.
+    
     Arguments:
-    line -- an arbitrary string containing XML syntax.
-    entities -- a dictionary containing user-defined entity references which will be replaced when building the XMLElement.
+    ``line`` -- an arbitrary string containing XML syntax.
+    ``entities`` -- a dictionary containing user-defined entity references which will be replaced when building the XMLElement.
     """
     non_marker_chars = '[^</>=" ]*'
     value_chars = '[^</>="]*'
@@ -47,11 +48,11 @@ def get_element_from_line(line: str, entities: dict = {}) -> XMLElement | None:
 
 
 def remove_refs(line: str, def_refs: dict = {}) -> str:
-    """Restore a string containing XML entity references to the intended 'plain' version.
+    """Restore a string containing XML entity references to the human-readable version.
 
     Arguments:
-    line -- an arbitrary string containing XML syntax.
-    def_refs -- a dictionary containing entity references defined at the beginning of the XML document (default empty dict).
+    ``line`` -- an arbitrary string containing XML syntax.
+    ``def_refs`` -- a dictionary containing entity references defined at the beginning of the XML document (defaults to empty dict).
     """
     predef_refs = {"lt": "<", "gt": ">", "apos": "'", "quot": '"', "amp": "&"}
     refs = def_refs | predef_refs
@@ -68,7 +69,7 @@ def extract_entities(doc_info: str) -> dict:
     """Read the document information of an XML file and return a dictionary containing the defined entity references.
 
     Arguments:
-    doc_info -- the beginning of an XML file containing strings like '<!ENTITY j \"l\">'.
+    ``doc_info`` -- the beginning of an XML file containing strings like '<!ENTITY j \"l\">'.
     """
     entity_list = [i for i in doc_info.split("<!") if i[0:6].upper() == "ENTITY"]
     entities = {}
@@ -84,9 +85,9 @@ def extract_entities(doc_info: str) -> dict:
 
 def extract_metadata(preamble: str) -> dict:
     """Return the XML version and encoding protocol defined on the first line of the XML file.
-    
+
     Arguments:
-    premble -- an arbitrary string containing XML syntax.
+    ``premble`` -- an arbitrary string containing XML syntax.
     """
     metadata = {}
     for key in ["xml version", "encoding"]:
@@ -99,11 +100,11 @@ def extract_metadata(preamble: str) -> dict:
 
 def starts_a_new_comment(line: str) -> tuple[bool, str | None]:
     """Return (True, str| None) if line contains characters which mark the beginning of an XML comment.
-    
+
     Identify whether a line is entirely a comment, partially a commment, or not a comment at all. If the line is partially a comment, return the part of the line before the comment begins as the second part of the return.
 
     Arguments:
-    line -- an arbitrary string containing XML syntax.
+    ``line`` -- an arbitrary string containing XML syntax.
     """
     comment_start_token = "<!--"
     if comment_start_token not in line:
@@ -117,11 +118,11 @@ def starts_a_new_comment(line: str) -> tuple[bool, str | None]:
 
 def ends_a_comment(line: str) -> tuple[bool, str | None]:
     """Return (True, str| None) if line contains characters which mark the end of an XML comment.
-    
+
     Identify whether a line is entirely a comment, partially a commment, or not a comment at all. If the line is partially a comment, return the part of the line after the comment ends as the second part of the return.
-    
+
     Arguments:
-    line -- an arbitrary string containing XML syntax.
+    ``line`` -- an arbitrary string containing XML syntax.
     """
     comment_end_token = "-->"
     token_length = len(comment_end_token)
@@ -136,9 +137,9 @@ def ends_a_comment(line: str) -> tuple[bool, str | None]:
 
 def generate_noncomment_lines(filepath: str):
     """Return a generator which supplies non-comment information from the XML file.
-    
+
     Arguments:
-    filepath -- location of the XML file being read"""
+    ``filepath`` -- location of the XML file being read"""
     with open(filepath, "r") as f:
         in_comment = False
         line = f.readline()
@@ -170,21 +171,21 @@ def load_xml_from_file(filepath: str):
 
     Handle exceptions raised by badly formed XML files or files not containing XML content.
     Arguments:
-    filepath -- location of the XML file being read
+    ``filepath`` -- location of the XML file being read
     """
     try:
         return load_from(filepath)
     except ValueError:
-        raise TypeError(f'No parsable XML tree found at {filepath}.')
+        raise TypeError(f"No parsable XML tree found at {filepath}.")
     except AttributeError:
-        raise TypeError(f'No parsable XML tree found at {filepath}.')
-        
+        raise TypeError(f"No parsable XML tree found at {filepath}.")
+
 
 def load_from(filepath: str):
     """Return an XMLElement object containing information described in the XML file at the filepath given.
-    
+
     Arguments:
-    filepath -- location of the XML file being read"""
+    ``filepath`` -- location of the XML file being read"""
 
     f = generate_noncomment_lines(filepath)
     metadata = extract_metadata(next(f))
