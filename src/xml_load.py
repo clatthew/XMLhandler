@@ -166,6 +166,12 @@ def generate_noncomment_lines(filepath: str):
 
 
 def load_xml_from_file(filepath: str):
+    """Return an XMLElement object containing information described in the XML file at the filepath given.
+
+    Handle exceptions raised by badly formed XML files or files not containing XML content.
+    Arguments:
+    filepath -- location of the XML file being read
+    """
     try:
         return load_from(filepath)
     except ValueError:

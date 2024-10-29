@@ -1,5 +1,5 @@
 from json import dumps
-from typing import Any, Self, TextIO, Literal
+from typing import Any, TextIO, Literal
 
 
 class XMLElement:
@@ -31,6 +31,7 @@ class XMLElement:
 
     @tag.setter
     def tag(self, new_val: str):
+        """The name displayed inside the XML tags."""
         is_valid_name(new_val, "tag name")
         self.__tag = new_val
 
@@ -49,8 +50,17 @@ class XMLElement:
                 raise TypeError("Entity must be of type dict")
         else:
             raise TypeError("Cannot add entity to non-root element")
+        
+    @property
+    def attributes(self):
+        return self.__attributes.copy()
 
     def add_attribute(self, new_attribute: dict):
+        """Add to the attributes property of the XMLElement.
+
+        Arguments:
+        new_attribute -- dict object containing the new attributes to add to the element.
+        """
         for key in new_attribute:
             is_valid_name(key, "attribute key")
         try:
@@ -59,13 +69,24 @@ class XMLElement:
             raise TypeError("Attribute must be of type dict")
 
     def remove_attribute(self, key: str):
+        """Remove the attribute with the supplied key from the XMLElement.
+
+        Arguments:
+        key -- the key of the attribute to be removed.
+        """
         del self.__attributes[key]
 
     def remove_entity(self, key: str):
+        """Remove the entity with the supplied key from the XMLElement.
+
+        Arguments:
+        key -- the key of the entity to be removed.
+        """
         del self.__entities[key]
 
     @property
     def is_root(self):
+        """Return true if the XMLElement object is at the root of its tree."""
         return self.root is self
 
     @property
@@ -80,13 +101,22 @@ class XMLElement:
             self.__value = new_val
 
     @property
-    def path(self):
+    def path(self) -> list[int]:
+        """Return the path of the element from its root note.
+
+        The path of the root node is [], the path of its first child [0], the path of its second child's third child is [1, 2].
+        """
         if self.is_root:
             return []
         else:
             return self.parent.path + [self.parent.children.index(self)]
 
-    def add_child(self, new_child: Self):
+    def add_child(self, new_child: 'XMLElement'):
+        """Add a child to the current element.
+
+        Arguments:
+        new_child -- XMLElement to add as child of the current XMLElement.
+        """
         if new_child in self.descendants:
             raise ValueError("cannot add descendant as child")
         if self.value:
@@ -102,13 +132,33 @@ class XMLElement:
             xmlelt.metadata = None
 
     def make_child(self, tag: str, attributes: dict = None, value: str = None):
+        """Create a child and add it to the current XMLElement's children.
+        
+        Arguments:
+        tag -- the name to be written inside the new child's tags.
+        attributes -- the attributes beloinging to the new child.
+        value -- the text which will appear between the child's start and stop tags."""
         new_child = XMLElement(tag, attributes, value)
         self.add_child(new_child)
 
     def add_sibling(self, new_sibling):
-        self.parent.add_child(new_sibling)
+        """Add a child to the current element's parent node.
+
+        Arguments:
+        new_child -- XMLElement to add as child of the current XMLElement's parent.
+        """
+        try:
+            self.parent.add_child(new_sibling)
+        except AttributeError:
+            raise IndexError("Cannot add sibling to element without a parent.")
 
     def make_sibling(self, tag=None, attributes: dict = None, value: str = None):
+        """Create a child and add it to the current XMLElement's parent's children.
+        
+        Arguments:
+        tag -- the name to be written inside the new element's tags.
+        attributes -- the attributes beloinging to the new element.
+        value -- the text which will appear between the element's start and stop tags."""
         if not tag:
             tag = self.tag
         new_sibling = XMLElement(tag, attributes, value)
@@ -116,11 +166,15 @@ class XMLElement:
 
     @property
     def last_child(self):
+        """Return the most recently-added child of the XMLElement object."""
         if self.children:
             return self.children[-1]
 
     @property
     def depth(self):
+        """Return the number of generations of parents which a node has.
+        
+        Root node has depth 0, its children have depth 1, etc."""
         if self.parent:
             return 1 + self.parent.depth
         else:
@@ -128,21 +182,32 @@ class XMLElement:
 
     @property
     def is_leaf(self):
+        """Return True if the XMLElement object does not have any children."""
         return not self.children
 
     @property
     def no_children(self):
+        """Return the number of immediate children of the XMLElement."""
         return len(self.children)
 
     @property
     def size(self):
+        """Return the number of elements in the element's XML tree which descent from it, including itself."""
         return len(self.descendants)
 
-    @property
-    def attributes(self):
-        return self.__attributes.copy()
-
-    def make_xml_tags(self, tab_size, self_closing=True):
+    def make_xml_tags(self, tab_size, self_closing=True) -> list[str]:
+        """Return the conponents needed to create the XML tags for an XMLElement.
+        
+        for all tags, return a list containing
+            0. Whitespace to print before the tag begins
+            1. the start tag, including any attributes
+        for non-self-closing tags, the list will also contain
+            2. value to be written between the tags
+            3. the stop tag
+            
+        Arguments:
+        tab_size -- the size of the indent between each level of the tree
+        self_closing -- changes the way leaf nodes without a value are displayed (defaults to True)"""
         offset = " " * self.depth * tab_size
 
         if self.is_leaf and self_closing and not self.value:
