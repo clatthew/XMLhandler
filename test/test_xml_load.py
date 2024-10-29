@@ -131,9 +131,9 @@ def test_load_xml_custom_entity_refs():
 )
 def test_load_faulty_file():
     with raises(TypeError) as err:
-        load_xml_from_file("test_data/not_xml/not_xml.sc")
+        load_xml_from_file("test_data/not_xml/not_xml")
     assert (
-        str(err.value) == "No parsable XML tree found at test_data/not_xml/not_xml.sc."
+        str(err.value) == "No parsable XML tree found at test_data/not_xml/not_xml."
     )
 
 
@@ -142,10 +142,10 @@ def test_load_faulty_file():
 )
 def test_load_faulty_file_2():
     with raises(TypeError) as err:
-        load_xml_from_file("test_data/not_xml/also_not_xml.sc")
+        load_xml_from_file("test_data/not_xml/also_not_xml")
     assert (
         str(err.value)
-        == "No parsable XML tree found at test_data/not_xml/also_not_xml.sc."
+        == "No parsable XML tree found at test_data/not_xml/also_not_xml."
     )
 
 
