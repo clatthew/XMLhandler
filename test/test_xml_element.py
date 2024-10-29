@@ -194,6 +194,12 @@ class Testmake_sibling:
         for child in root_element.children:
             assert child.tag == "book"
 
+    @mark.it("raises exception when attempting to make sibling for XMLElement without a parent")
+    def test_make_sibling_no_parent(self, root_element):
+        with raises(IndexError) as err:
+            root_element.make_sibling("book")
+        assert str(err.value) == "Cannot add sibling to element without a parent."
+
 
 class Testadd_sibling:
     @mark.it("add_sibling adds the passed object to its parent's children")
@@ -219,6 +225,14 @@ class Testadd_sibling:
         root_element.add_child(test_child1)
         test_child1.add_sibling(test_child2)
         assert test_child2.parent is root_element
+
+    @mark.it("raises exception when attempting to add sibling to XMLElement without a parent")
+    def test_add_sibling_no_parent(self, root_element):
+        test_child1 = XMLElement("book")
+        with raises(IndexError) as err:
+            root_element.add_sibling(test_child1)
+        assert str(err.value) == "Cannot add sibling to element without a parent."
+
 
 
 class Testlast_child:
